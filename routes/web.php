@@ -45,6 +45,7 @@ Route::post('/register', [AuthController::class, 'register'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
+
 /*
 |--------------------------------------------------------------------------
 | ROUTE YANG MEMBUTUHKAN LOGIN
@@ -72,6 +73,7 @@ Route::middleware('auth')->group(function () {
         KaryawanDashboardController::class,
         'index'
     ])->name('karyawan.dashboard');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -109,6 +111,7 @@ Route::middleware('auth')->group(function () {
         'destroy'
     ])->name('admin.pesanan.destroy');
 
+
     /*
     |--------------------------------------------------------------------------
     | PESAN JASA JAHIT PELANGGAN
@@ -125,6 +128,7 @@ Route::middleware('auth')->group(function () {
         'storePelanggan'
     ])->name('pelanggan.pesanan.store');
 
+
     /*
     |--------------------------------------------------------------------------
     | PESANAN SAYA PELANGGAN
@@ -136,6 +140,7 @@ Route::middleware('auth')->group(function () {
         'index'
     ])->name('pelanggan.pesanan.index');
 
+
     /*
     |--------------------------------------------------------------------------
     | PEMBAYARAN PELANGGAN - MIDTRANS
@@ -146,6 +151,7 @@ Route::middleware('auth')->group(function () {
         PaymentController::class,
         'pay'
     ])->name('pelanggan.pembayaran.pay');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -183,6 +189,7 @@ Route::middleware('auth')->group(function () {
         'destroy'
     ])->name('admin.pelanggan.destroy');
 
+
     /*
     |--------------------------------------------------------------------------
     | REVISI PESANAN ADMIN
@@ -219,6 +226,7 @@ Route::middleware('auth')->group(function () {
         'destroy'
     ])->name('admin.revisi.destroy');
 
+
     /*
     |--------------------------------------------------------------------------
     | LAPORAN ADMIN
@@ -229,6 +237,7 @@ Route::middleware('auth')->group(function () {
         LaporanController::class,
         'index'
     ])->name('admin.laporan.index');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -243,6 +252,7 @@ Route::middleware('auth')->group(function () {
         AdminPembayaranController::class,
         'index'
     ])->name('admin.pembayaran.index');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -274,6 +284,7 @@ Route::middleware('auth')->group(function () {
         UkuranController::class,
         'update'
     ])->name('karyawan.ukuran.update');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -311,6 +322,7 @@ Route::middleware('auth')->group(function () {
         'destroy'
     ])->name('karyawan.revisi.destroy');
 
+
     /*
     |--------------------------------------------------------------------------
     | STATUS PENGERJAAN KARYAWAN
@@ -326,6 +338,7 @@ Route::middleware('auth')->group(function () {
         KaryawanStatusPengerjaanController::class,
         'update'
     ])->name('karyawan.pengerjaan.update');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -362,6 +375,7 @@ Route::middleware('auth')->group(function () {
         AdminUkuranController::class,
         'destroy'
     ])->name('admin.ukuran.destroy');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -407,9 +421,12 @@ Route::middleware('auth')->group(function () {
         'destroy'
     ])->name('admin.referensi-model.destroy');
 
+
     /*
     |--------------------------------------------------------------------------
     | STATUS PENGERJAAN ADMIN
+    |--------------------------------------------------------------------------
+    | Admin melihat perkembangan pengerjaan seluruh pesanan.
     |--------------------------------------------------------------------------
     */
 
