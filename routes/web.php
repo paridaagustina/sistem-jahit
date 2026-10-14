@@ -26,7 +26,7 @@ use App\Http\Controllers\AdminStatusPengerjaanController;
 
 /*
 |--------------------------------------------------------------------------
-| AUTHENTICATION
+| AUTENTIKASI
 |--------------------------------------------------------------------------
 */
 
@@ -61,8 +61,7 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/admin/dashboard', [
-        AdminDashboardController::class,
-        'index'
+        AdminDashboardController::class, 'index'
     ])->name('admin.dashboard');
 
     Route::get('/dashboard', function () {
@@ -70,8 +69,7 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::get('/karyawan/dashboard', [
-        KaryawanDashboardController::class,
-        'index'
+        KaryawanDashboardController::class, 'index'
     ])->name('karyawan.dashboard');
 
 
@@ -82,33 +80,27 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/admin/pesanan', [
-        PesananController::class,
-        'index'
+        PesananController::class, 'index'
     ])->name('admin.pesanan.index');
 
     Route::get('/admin/pesanan/create', [
-        PesananController::class,
-        'create'
+        PesananController::class, 'create'
     ])->name('admin.pesanan.create');
 
     Route::post('/admin/pesanan', [
-        PesananController::class,
-        'store'
+        PesananController::class, 'store'
     ])->name('admin.pesanan.store');
 
     Route::get('/admin/pesanan/{id}/edit', [
-        PesananController::class,
-        'edit'
+        PesananController::class, 'edit'
     ])->name('admin.pesanan.edit');
 
     Route::put('/admin/pesanan/{id}', [
-        PesananController::class,
-        'update'
+        PesananController::class, 'update'
     ])->name('admin.pesanan.update');
 
     Route::delete('/admin/pesanan/{id}', [
-        PesananController::class,
-        'destroy'
+        PesananController::class, 'destroy'
     ])->name('admin.pesanan.destroy');
 
 
@@ -119,13 +111,11 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/pesan-jasa-jahit', [
-        PesananController::class,
-        'createPelanggan'
+        PesananController::class, 'createPelanggan'
     ])->name('pelanggan.pesanan.create');
 
     Route::post('/pesan-jasa-jahit', [
-        PesananController::class,
-        'storePelanggan'
+        PesananController::class, 'storePelanggan'
     ])->name('pelanggan.pesanan.store');
 
 
@@ -136,20 +126,18 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/pesanan-saya', [
-        PelangganPesananController::class,
-        'index'
+        PelangganPesananController::class, 'index'
     ])->name('pelanggan.pesanan.index');
 
 
     /*
     |--------------------------------------------------------------------------
-    | PEMBAYARAN PELANGGAN - MIDTRANS
+    | PEMBAYARAN PELANGGAN
     |--------------------------------------------------------------------------
     */
 
     Route::get('/pesanan-saya/{id}/bayar', [
-        PaymentController::class,
-        'pay'
+        PaymentController::class, 'pay'
     ])->name('pelanggan.pembayaran.pay');
 
 
@@ -160,33 +148,27 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/admin/pelanggan', [
-        PelangganController::class,
-        'index'
+        PelangganController::class, 'index'
     ])->name('admin.pelanggan.index');
 
     Route::get('/admin/pelanggan/create', [
-        PelangganController::class,
-        'create'
+        PelangganController::class, 'create'
     ])->name('admin.pelanggan.create');
 
     Route::post('/admin/pelanggan', [
-        PelangganController::class,
-        'store'
+        PelangganController::class, 'store'
     ])->name('admin.pelanggan.store');
 
     Route::get('/admin/pelanggan/{id}/edit', [
-        PelangganController::class,
-        'edit'
+        PelangganController::class, 'edit'
     ])->name('admin.pelanggan.edit');
 
     Route::put('/admin/pelanggan/{id}', [
-        PelangganController::class,
-        'update'
+        PelangganController::class, 'update'
     ])->name('admin.pelanggan.update');
 
     Route::delete('/admin/pelanggan/{id}', [
-        PelangganController::class,
-        'destroy'
+        PelangganController::class, 'destroy'
     ])->name('admin.pelanggan.destroy');
 
 
@@ -197,33 +179,27 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/admin/pesanan/{id}/revisi', [
-        RevisiController::class,
-        'index'
+        RevisiController::class, 'index'
     ])->name('admin.revisi.index');
 
     Route::get('/admin/pesanan/{id}/revisi/create', [
-        RevisiController::class,
-        'create'
+        RevisiController::class, 'create'
     ])->name('admin.revisi.create');
 
     Route::post('/admin/pesanan/{id}/revisi', [
-        RevisiController::class,
-        'store'
+        RevisiController::class, 'store'
     ])->name('admin.revisi.store');
 
     Route::get('/admin/revisi/{id}/edit', [
-        RevisiController::class,
-        'edit'
+        RevisiController::class, 'edit'
     ])->name('admin.revisi.edit');
 
     Route::put('/admin/revisi/{id}', [
-        RevisiController::class,
-        'update'
+        RevisiController::class, 'update'
     ])->name('admin.revisi.update');
 
     Route::delete('/admin/revisi/{id}', [
-        RevisiController::class,
-        'destroy'
+        RevisiController::class, 'destroy'
     ])->name('admin.revisi.destroy');
 
 
@@ -234,8 +210,7 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/admin/laporan', [
-        LaporanController::class,
-        'index'
+        LaporanController::class, 'index'
     ])->name('admin.laporan.index');
 
 
@@ -243,46 +218,37 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     | PEMBAYARAN ADMIN
     |--------------------------------------------------------------------------
-    | Admin memantau transaksi pelanggan melalui controller terpisah.
-    | Route ini belum mencakup fitur tambah/edit/hapus transaksi.
-    |--------------------------------------------------------------------------
     */
 
     Route::get('/admin/pembayaran', [
-        AdminPembayaranController::class,
-        'index'
+        AdminPembayaranController::class, 'index'
     ])->name('admin.pembayaran.index');
 
 
     /*
     |--------------------------------------------------------------------------
-    | DATA UKURAN KARYAWAN
+    | UKURAN KARYAWAN
     |--------------------------------------------------------------------------
     */
 
     Route::get('/karyawan/ukuran', [
-        UkuranController::class,
-        'index'
+        UkuranController::class, 'index'
     ])->name('karyawan.ukuran.index');
 
     Route::get('/karyawan/ukuran/create', [
-        UkuranController::class,
-        'create'
+        UkuranController::class, 'create'
     ])->name('karyawan.ukuran.create');
 
     Route::post('/karyawan/ukuran', [
-        UkuranController::class,
-        'store'
+        UkuranController::class, 'store'
     ])->name('karyawan.ukuran.store');
 
     Route::get('/karyawan/ukuran/{id}/edit', [
-        UkuranController::class,
-        'edit'
+        UkuranController::class, 'edit'
     ])->name('karyawan.ukuran.edit');
 
     Route::put('/karyawan/ukuran/{id}', [
-        UkuranController::class,
-        'update'
+        UkuranController::class, 'update'
     ])->name('karyawan.ukuran.update');
 
 
@@ -293,33 +259,27 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/karyawan/revisi', [
-        KaryawanRevisiController::class,
-        'index'
+        KaryawanRevisiController::class, 'index'
     ])->name('karyawan.revisi.index');
 
     Route::get('/karyawan/revisi/create', [
-        KaryawanRevisiController::class,
-        'create'
+        KaryawanRevisiController::class, 'create'
     ])->name('karyawan.revisi.create');
 
     Route::post('/karyawan/revisi', [
-        KaryawanRevisiController::class,
-        'store'
+        KaryawanRevisiController::class, 'store'
     ])->name('karyawan.revisi.store');
 
     Route::get('/karyawan/revisi/{id}/edit', [
-        KaryawanRevisiController::class,
-        'edit'
+        KaryawanRevisiController::class, 'edit'
     ])->name('karyawan.revisi.edit');
 
     Route::put('/karyawan/revisi/{id}', [
-        KaryawanRevisiController::class,
-        'update'
+        KaryawanRevisiController::class, 'update'
     ])->name('karyawan.revisi.update');
 
     Route::delete('/karyawan/revisi/{id}', [
-        KaryawanRevisiController::class,
-        'destroy'
+        KaryawanRevisiController::class, 'destroy'
     ])->name('karyawan.revisi.destroy');
 
 
@@ -330,50 +290,42 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/karyawan/pengerjaan', [
-        KaryawanStatusPengerjaanController::class,
-        'index'
+        KaryawanStatusPengerjaanController::class, 'index'
     ])->name('karyawan.pengerjaan.index');
 
     Route::put('/karyawan/pengerjaan/{id}', [
-        KaryawanStatusPengerjaanController::class,
-        'update'
+        KaryawanStatusPengerjaanController::class, 'update'
     ])->name('karyawan.pengerjaan.update');
 
 
     /*
     |--------------------------------------------------------------------------
-    | DATA UKURAN ADMIN
+    | UKURAN ADMIN
     |--------------------------------------------------------------------------
     */
 
     Route::get('/admin/ukuran', [
-        AdminUkuranController::class,
-        'index'
+        AdminUkuranController::class, 'index'
     ])->name('admin.ukuran.index');
 
     Route::get('/admin/ukuran/create', [
-        AdminUkuranController::class,
-        'create'
+        AdminUkuranController::class, 'create'
     ])->name('admin.ukuran.create');
 
     Route::post('/admin/ukuran', [
-        AdminUkuranController::class,
-        'store'
+        AdminUkuranController::class, 'store'
     ])->name('admin.ukuran.store');
 
     Route::get('/admin/ukuran/{id}/edit', [
-        AdminUkuranController::class,
-        'edit'
+        AdminUkuranController::class, 'edit'
     ])->name('admin.ukuran.edit');
 
     Route::put('/admin/ukuran/{id}', [
-        AdminUkuranController::class,
-        'update'
+        AdminUkuranController::class, 'update'
     ])->name('admin.ukuran.update');
 
     Route::delete('/admin/ukuran/{id}', [
-        AdminUkuranController::class,
-        'destroy'
+        AdminUkuranController::class, 'destroy'
     ])->name('admin.ukuran.destroy');
 
 
@@ -384,41 +336,31 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/admin/referensi-model', [
-        AdminReferensiModelController::class,
-        'index'
+        AdminReferensiModelController::class, 'index'
     ])->name('admin.referensi-model.index');
 
     Route::post('/admin/referensi-model', [
-        AdminReferensiModelController::class,
-        'store'
+        AdminReferensiModelController::class, 'store'
     ])->name('admin.referensi-model.store');
 
     Route::get('/admin/referensi-model/{kategori}', [
-        AdminReferensiModelController::class,
-        'kategori'
+        AdminReferensiModelController::class, 'kategori'
     ])->whereIn('kategori', [
-        'kebaya',
-        'dress',
-        'perbaikan',
+        'kebaya', 'dress', 'perbaikan'
     ])->name('admin.referensi-model.kategori');
 
     Route::get('/admin/referensi-model/{kategori}/jenis/{jenis}', [
-        AdminReferensiModelController::class,
-        'jenis'
+        AdminReferensiModelController::class, 'jenis'
     ])->whereIn('kategori', [
-        'kebaya',
-        'dress',
-        'perbaikan',
+        'kebaya', 'dress', 'perbaikan'
     ])->name('admin.referensi-model.jenis');
 
     Route::put('/admin/referensi-model/{referensiModel}', [
-        AdminReferensiModelController::class,
-        'update'
+        AdminReferensiModelController::class, 'update'
     ])->name('admin.referensi-model.update');
 
     Route::delete('/admin/referensi-model/{referensiModel}', [
-        AdminReferensiModelController::class,
-        'destroy'
+        AdminReferensiModelController::class, 'destroy'
     ])->name('admin.referensi-model.destroy');
 
 
@@ -426,18 +368,39 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     | STATUS PENGERJAAN ADMIN
     |--------------------------------------------------------------------------
-    | Admin melihat perkembangan pengerjaan seluruh pesanan.
-    |--------------------------------------------------------------------------
     */
 
     Route::get('/admin/status-pengerjaan', [
-        AdminStatusPengerjaanController::class,
-        'index'
+        AdminStatusPengerjaanController::class, 'index'
     ])->name('admin.status-pengerjaan.index');
 
     Route::put('/admin/status-pengerjaan/{id}', [
-        AdminStatusPengerjaanController::class,
-        'update'
+        AdminStatusPengerjaanController::class, 'update'
     ])->name('admin.status-pengerjaan.update');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UKURAN SAYA PELANGGAN
+    |--------------------------------------------------------------------------
+    | Pelanggan dapat melihat, menambah, mengubah, dan menghapus ukuran sendiri.
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/ukuran-saya', [
+        UkuranController::class, 'indexPelanggan'
+    ])->name('pelanggan.ukuran.index');
+
+    Route::post('/ukuran-saya', [
+        UkuranController::class, 'storePelanggan'
+    ])->name('pelanggan.ukuran.store');
+
+    Route::put('/ukuran-saya/{id}', [
+        UkuranController::class, 'updatePelanggan'
+    ])->name('pelanggan.ukuran.update');
+
+    Route::delete('/ukuran-saya/{id}', [
+        UkuranController::class, 'destroyPelanggan'
+    ])->name('pelanggan.ukuran.destroy');
 
 });

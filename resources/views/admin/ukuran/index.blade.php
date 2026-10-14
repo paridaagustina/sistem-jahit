@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Ukuran - Jaitin</title>
+    <title>Data Ukuran Pelanggan - Jaitin</title>
 
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
 
@@ -19,349 +19,332 @@
             color: #4b3832;
         }
 
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
         /* SIDEBAR */
         .sidebar {
             width: 250px;
-            min-height: 100vh;
-            padding: 25px 18px;
+            height: 100vh;
             background: #b8898d;
             color: white;
-            flex-shrink: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
             display: flex;
             flex-direction: column;
+            padding: 25px 18px;
+            overflow-y: auto;
+            z-index: 100;
         }
 
-        .logo-area {
+        .brand {
             text-align: center;
             margin-bottom: 35px;
         }
 
-        .logo-circle {
+        .brand-logo {
             width: 75px;
             height: 75px;
-            margin: auto;
-            border-radius: 50%;
             background: #fffaf5;
+            border-radius: 50%;
+            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            color: #b8898d;
+            font-size: 30px;
         }
 
-        .logo-circle img {
-            width: 65px;
-            height: 65px;
-            object-fit: contain;
+        .brand h2 {
+            color: white;
+            font-size: 23px;
         }
 
-        .brand {
-            margin-top: 10px;
-            font-size: 22px;
-            font-weight: bold;
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
         }
 
-        .role {
-            margin-top: 5px;
-            font-size: 13px;
-            opacity: .85;
-        }
-
-        .menu {
-            list-style: none;
-            width: 100%;
-            padding: 0;
-        }
-
-        .menu li {
-            list-style: none;
-            margin-bottom: 8px;
-        }
-
-        .menu a {
+        .sidebar a {
             display: block;
             padding: 13px 15px;
+            border-radius: 10px;
             color: white;
             text-decoration: none;
-            border-radius: 10px;
-            transition: .2s;
+            font-size: 15px;
+            transition: background 0.2s;
         }
 
-        .menu a:hover,
-        .menu a.active {
-            background: #9f7378;
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #9f7479;
         }
 
-        .logout {
+        .sidebar .logout {
             margin-top: auto;
-            padding-top: 30px;
-        }
-
-        .logout form {
-            width: 100%;
-        }
-
-        .logout button {
-            width: 100%;
-            border: none;
-            background: #8f666b;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .logout button:hover {
-            background: #79545a;
+            background: #9f7479;
+            text-align: center;
         }
 
         /* KONTEN UTAMA */
-        .main {
-            flex: 1;
-            padding: 30px 35px;
-            min-width: 0;
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
         }
 
-        .topbar {
+        .container {
+            max-width: 1600px;
+            margin: auto;
+        }
+
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 25px;
         }
 
-        .topbar h1 {
+        h1 {
             font-size: 28px;
         }
 
-        .topbar p {
-            margin-top: 6px;
+        .subtitle {
+            margin-top: 8px;
             color: #806e69;
+            line-height: 1.6;
         }
 
-        .admin-info {
-            background: #fffaf5;
-            padding: 10px 18px;
-            border-radius: 20px;
-            color: #8e6268;
-            border: 1px solid #ead6ca;
-            white-space: nowrap;
-        }
-
-        /* TABEL */
-        .table-box {
+        .card {
             background: #fffaf5;
             border: 1px solid #ead6ca;
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(120, 90, 80, .06);
-            overflow-x: auto;
+            padding: 24px;
+            box-shadow: 0 4px 12px #785a5010;
         }
 
-        .table-header {
+        .actions {
             display: flex;
-            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
         }
 
-        .table-header h2 {
-            font-size: 20px;
+        .btn {
+            display: inline-block;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
         }
 
-        /* NOTIFIKASI */
+        .primary {
+            background: #b8898d;
+            color: white;
+        }
+
+        .secondary {
+            background: #eee0d8;
+            color: #654b4c;
+        }
+
+        .danger {
+            background: #f5e2df;
+            color: #914d51;
+        }
+
         .alert {
-            padding: 12px 15px;
+            padding: 14px 16px;
             border-radius: 9px;
-            margin-bottom: 20px;
-            font-size: 14px;
+            margin-bottom: 18px;
         }
 
-        .alert-success {
+        .success {
             background: #e8f3e8;
-            color: #4c7250;
-            border: 1px solid #c9dfca;
+            color: #426b47;
         }
 
-        .alert-error {
+        .error {
             background: #f8dddd;
             color: #8f4f55;
-            border: 1px solid #e5bfc2;
         }
 
-        /* ISI TABEL */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
         table {
             width: 100%;
-            min-width: 950px;
             border-collapse: collapse;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #ead6ca;
+            text-align: left;
+            font-size: 13px;
         }
 
         th {
-            background: #ead6ca;
-            color: #5d4843;
-            padding: 13px;
-            text-align: left;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 13px;
-            border-bottom: 1px solid #eee0d8;
-            font-size: 14px;
-            vertical-align: middle;
-            white-space: nowrap;
+            background: #f2e4dc;
+            color: #654b4c;
         }
 
         tbody tr:hover {
-            background: #fcf5f0;
+            background: #fff4ed;
         }
 
         .empty {
-            text-align: center;
             padding: 30px;
-            color: #927477;
+            text-align: center;
+            color: #806e69;
         }
 
-        /* RESPONSIF */
-        @media (max-width: 768px) {
-            .layout {
-                display: block;
-            }
+        .inline-form {
+            display: inline;
+        }
 
+        @media (max-width: 800px) {
             .sidebar {
-                width: 100%;
-                min-height: auto;
+                width: 200px;
+                padding: 20px 12px;
             }
 
-            .main {
-                padding: 20px;
+            .main-content {
+                margin-left: 200px;
+                padding: 20px 15px;
             }
 
-            .topbar,
-            .table-header {
-                flex-direction: column;
+            .header {
                 align-items: flex-start;
             }
+        }
 
-            .logout {
-                margin-top: 20px;
+        @media (max-width: 520px) {
+            .sidebar {
+                width: 145px;
+                padding: 18px 9px;
+            }
+
+            .sidebar a {
+                padding: 11px 8px;
+                font-size: 12px;
+            }
+
+            .brand-logo {
+                width: 55px;
+                height: 55px;
+            }
+
+            .brand h2 {
+                font-size: 19px;
+            }
+
+            .main-content {
+                margin-left: 145px;
+                padding: 15px 10px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+
+            .card {
+                padding: 14px;
             }
         }
     </style>
 </head>
 
 <body>
-<div class="layout">
 
-    <!-- SIDEBAR ADMIN -->
+    {{-- SIDEBAR --}}
     <aside class="sidebar">
-        <div class="logo-area">
-            <div class="logo-circle">
-                <img src="{{ asset('images/logo-jaitin.png') }}"
-                     alt="Logo Jaitin">
-            </div>
-
-            <div class="brand">Jaitin</div>
-            <div class="role">Admin</div>
+        <div class="brand">
+            <div class="brand-logo">✂</div>
+            <h2>Jaitin</h2>
         </div>
 
-        <ul class="menu">
-            <li>
-                <a href="{{ route('admin.dashboard') }}">
-                    Dashboard
-                </a>
-            </li>
+        <nav class="sidebar-menu">
+            <a href="{{ route('admin.dashboard') }}">
+                Dashboard
+            </a>
 
-            <li>
-                <a href="{{ route('admin.pelanggan.index') }}">
-                    Data Pelanggan
-                </a>
-            </li>
+            <a href="{{ url('/admin/pelanggan') }}">
+                Data Pelanggan
+            </a>
 
-            <li>
-                <a href="{{ route('admin.pesanan.index') }}">
-                    Data Pesanan
-                </a>
-            </li>
+            <a href="{{ route('admin.pesanan.index') }}">
+                Data Pesanan
+            </a>
 
-            <li>
-                <a href="{{ route('admin.ukuran.index') }}"
-                   class="active">
-                    Data Ukuran
-                </a>
-            </li>
+            <a href="{{ route('admin.ukuran.index') }}" class="active">
+                Data Ukuran
+            </a>
 
-            <li>
-                <a href="{{ route('admin.referensi-model.index') }}">
-                    Referensi Model
-                </a>
-            </li>
+            <a href="{{ url('/admin/referensi') }}">
+                Referensi Model
+            </a>
 
-            <li>
-                <a href="{{ route('admin.pembayaran.index') }}">
-                    Pembayaran
-                </a>
-            </li>
+            <a href="{{ url('/admin/pembayaran') }}">
+                Pembayaran
+            </a>
 
-            <li>
-                <a href="{{ route('admin.status-pengerjaan.index') }}">
-                    Status Pengerjaan
-                </a>
-            </li>
-        </ul>
+            <a href="{{ url('/admin/status-pengerjaan') }}">
+                Status Pengerjaan
+            </a>
+        </nav>
 
-        <div class="logout">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit">Logout</button>
-            </form>
-        </div>
+        <form action="{{ route('logout') }}" method="POST"
+              style="margin-top: auto;">
+            @csrf
+            <button type="submit" class="btn logout"
+                    style="width: 100%; color: white; border: none;">
+                Logout
+            </button>
+        </form>
     </aside>
 
-    <!-- KONTEN UTAMA -->
-    <main class="main">
-        <div class="topbar">
-            <div>
-                <h1>Data Ukuran Pelanggan</h1>
-                <p>
-                    Lihat data ukuran pelanggan untuk mendukung
-                    pengelolaan pesanan jahit.
-                </p>
+    {{-- KONTEN HALAMAN --}}
+    <main class="main-content">
+        <div class="container">
+
+            <div class="header">
+                <div>
+                    <h1>Data Ukuran Pelanggan</h1>
+                    <p class="subtitle">
+                        Kelola data ukuran tubuh pelanggan yang tersimpan di Jaitin.
+                    </p>
+                </div>
+
+                <div class="actions">
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="btn secondary">
+                        Kembali ke Dashboard
+                    </a>
+
+                    <a href="{{ route('admin.ukuran.create') }}"
+                       class="btn primary">
+                        + Tambah Ukuran
+                    </a>
+                </div>
             </div>
 
-            <div class="admin-info">
-                {{ Auth::user()->nama ?? 'Admin' }}
-            </div>
-        </div>
-
-        <div class="table-box">
-
-            <!-- NOTIFIKASI BERHASIL -->
             @if (session('success'))
-                <div class="alert alert-success">
+                <div class="alert success">
                     {{ session('success') }}
                 </div>
             @endif
 
-            <!-- NOTIFIKASI ERROR -->
-            @if (session('error'))
-                <div class="alert alert-error">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            <!-- NOTIFIKASI VALIDASI -->
             @if ($errors->any())
-                <div class="alert alert-error">
+                <div class="alert error">
                     <strong>Terjadi kesalahan:</strong>
-                    <ul style="margin: 8px 0 0 18px;">
+                    <ul style="margin: 8px 0 0 20px;">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -369,83 +352,99 @@
                 </div>
             @endif
 
-            <!-- HEADER TABEL -->
-            <div class="table-header">
-                <h2>Daftar Ukuran Pelanggan</h2>
+            <div class="card">
+                <h2>Daftar Ukuran</h2>
+
+                <p class="subtitle">
+                    Jumlah data: {{ $ukuran->count() }} ukuran
+                </p>
+
+                @if ($ukuran->isEmpty())
+                    <div class="empty">
+                        Belum ada data ukuran pelanggan.
+                    </div>
+                @else
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Nama Pelanggan</th>
+                                    <th>Panjang Baju</th>
+                                    <th>Lebar Bahu</th>
+                                    <th>Lingkar Dada</th>
+                                    <th>Lingkar Pinggang</th>
+                                    <th>Lingkar Lengan</th>
+                                    <th>Tanggal Pengukuran</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach ($ukuran as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+
+                                        <td>
+                                            {{ $item->user->nama ?? 'Pelanggan tidak ditemukan' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $item->panjang_baju !== null ? $item->panjang_baju . ' cm' : '-' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $item->lebar_bahu !== null ? $item->lebar_bahu . ' cm' : '-' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $item->lingkar_dada !== null ? $item->lingkar_dada . ' cm' : '-' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $item->lingkar_pinggang !== null ? $item->lingkar_pinggang . ' cm' : '-' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $item->lingkar_lengan !== null ? $item->lingkar_lengan . ' cm' : '-' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y') : '-' }}
+                                        </td>
+
+                                        <td>
+                                            <div class="actions">
+                                                <a href="{{ route('admin.ukuran.edit', $item->id_ukuran) }}"
+                                                   class="btn secondary">
+                                                    Edit
+                                                </a>
+
+                                                <form class="inline-form"
+                                                      action="{{ route('admin.ukuran.destroy', $item->id_ukuran) }}"
+                                                      method="POST"
+                                                      onsubmit="return confirm('Yakin ingin menghapus data ukuran ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button type="submit"
+                                                            class="btn danger">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             </div>
 
-            <!-- TABEL DATA UKURAN -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Pelanggan</th>
-                        <th>Panjang Baju (cm)</th>
-                        <th>Lebar Bahu (cm)</th>
-                        <th>Lingkar Dada (cm)</th>
-                        <th>Lingkar Pinggang (cm)</th>
-                        <th>Lingkar Lengan (cm)</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @forelse ($ukuran as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-
-                            <td>
-                                {{ $item->user->nama ?? '-' }}
-                            </td>
-
-                            <td>
-                                {{ $item->panjang_baju !== null
-                                    ? number_format((float) $item->panjang_baju, 2, ',', '.')
-                                    : '-' }}
-                            </td>
-
-                            <td>
-                                {{ $item->lebar_bahu !== null
-                                    ? number_format((float) $item->lebar_bahu, 2, ',', '.')
-                                    : '-' }}
-                            </td>
-
-                            <td>
-                                {{ $item->lingkar_dada !== null
-                                    ? number_format((float) $item->lingkar_dada, 2, ',', '.')
-                                    : '-' }}
-                            </td>
-
-                            <td>
-                                {{ $item->lingkar_pinggang !== null
-                                    ? number_format((float) $item->lingkar_pinggang, 2, ',', '.')
-                                    : '-' }}
-                            </td>
-
-                            <td>
-                                {{ $item->lingkar_lengan !== null
-                                    ? number_format((float) $item->lingkar_lengan, 2, ',', '.')
-                                    : '-' }}
-                            </td>
-
-                            <td>
-                                {{ $item->tanggal
-                                    ? \Carbon\Carbon::parse($item->tanggal)->format('d-m-Y')
-                                    : '-' }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="empty">
-                                Belum ada data ukuran pelanggan.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
         </div>
     </main>
-</div>
+
 </body>
 </html>
 ```

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -25,18 +26,19 @@
             min-height: 100vh;
         }
 
-        /* =========================
-           SIDEBAR
-        ========================= */
+        /* SIDEBAR */
 
         .sidebar {
             width: 250px;
+            flex-shrink: 0;
             background: #b8898d;
             color: white;
             padding: 25px 18px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 10;
         }
 
         .logo-area {
@@ -70,6 +72,8 @@
 
         .menu {
             list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
         .menu li {
@@ -78,25 +82,23 @@
 
         .menu a {
             display: block;
+            position: relative;
+            z-index: 11;
             padding: 13px 15px;
             color: white;
             text-decoration: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: 0.2s;
+            pointer-events: auto;
+            transition: background 0.2s;
         }
 
-        .menu a:hover {
-            background: #9f7378;
-        }
-
+        .menu a:hover,
         .menu a.active {
             background: #9f7378;
         }
 
-        /* =========================
-           LOGOUT
-        ========================= */
+        /* LOGOUT */
 
         .logout {
             margin-top: auto;
@@ -118,12 +120,11 @@
             background: #7e595e;
         }
 
-        /* =========================
-           MAIN
-        ========================= */
+        /* MAIN */
 
         .main {
             flex: 1;
+            min-width: 0;
             padding: 30px 35px;
         }
 
@@ -131,6 +132,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
             margin-bottom: 30px;
         }
 
@@ -149,11 +151,10 @@
             padding: 11px 18px;
             border-radius: 20px;
             color: #8e6268;
+            white-space: nowrap;
         }
 
-        /* =========================
-           WELCOME
-        ========================= */
+        /* WELCOME */
 
         .welcome {
             background: #ead6ca;
@@ -173,13 +174,11 @@
             line-height: 1.6;
         }
 
-        /* =========================
-           CARDS
-        ========================= */
+        /* CARDS */
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 18px;
             margin-bottom: 25px;
         }
@@ -210,9 +209,7 @@
             margin-bottom: 5px;
         }
 
-        /* =========================
-           MENU CEPAT
-        ========================= */
+        /* MENU CEPAT */
 
         .section {
             background: #fffaf5;
@@ -229,11 +226,12 @@
 
         .quick-menu {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 15px;
         }
 
         .quick-menu a {
+            display: block;
             text-decoration: none;
             color: #4b3832;
             background: #f8f1eb;
@@ -261,9 +259,7 @@
             font-weight: bold;
         }
 
-        /* =========================
-           INFO
-        ========================= */
+        /* INFO */
 
         .info {
             background: #fffaf5;
@@ -282,35 +278,52 @@
             line-height: 1.7;
         }
 
-        /* =========================
-           RESPONSIVE
-        ========================= */
+        /* RESPONSIVE */
 
         @media (max-width: 1000px) {
-
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
+            .cards,
+            .quick-menu {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
-            .quick-menu {
-                grid-template-columns: repeat(2, 1fr);
+            .main {
+                padding: 25px;
             }
         }
 
         @media (max-width: 700px) {
+            .layout {
+                flex-direction: column;
+            }
 
             .sidebar {
-                width: 200px;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .logo-area {
+                margin-bottom: 20px;
+            }
+
+            .menu {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .logout {
+                margin-top: 20px;
             }
 
             .main {
                 padding: 20px;
             }
 
-            .cards {
-                grid-template-columns: 1fr;
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
+            .cards,
             .quick-menu {
                 grid-template-columns: 1fr;
             }
@@ -322,25 +335,20 @@
 
 <div class="layout">
 
-    <!-- =========================
-         SIDEBAR
-    ========================= -->
+    <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
         <div class="logo-area">
-
             <div class="logo-circle">
                 <img
                     src="{{ asset('images/logo-jaitin.png') }}"
                     alt="Logo Jaitin"
+                    onerror="this.style.display='none'"
                 >
             </div>
 
-            <div class="brand">
-                Jaitin
-            </div>
-
+            <div class="brand">Jaitin</div>
         </div>
 
         <ul class="menu">
@@ -375,30 +383,36 @@
                 </a>
             </li>
 
-            <!-- UKURAN SAYA -->
+            <!-- UKURAN SAYA: LINK SUDAH DIPERBAIKI -->
             <li>
-                <a href="{{ route('dashboard') }}">
+                <a
+                    href="{{ route('pelanggan.ukuran.index') }}"
+                    class="{{ request()->routeIs('pelanggan.ukuran.*') ? 'active' : '' }}"
+                >
                     Ukuran Saya
                 </a>
             </li>
 
             <!-- PEMBAYARAN -->
             <li>
-                <a href="{{ route('dashboard') }}">
+                <a
+                    href="/pesanan-saya"
+                    class="{{ request()->is('pesanan-saya*') ? 'active' : '' }}"
+                >
                     Pembayaran
                 </a>
             </li>
 
             <!-- RIWAYAT REVISI -->
             <li>
-                <a href="{{ route('dashboard') }}">
+                <a href="/riwayat-revisi">
                     Riwayat Revisi
                 </a>
             </li>
 
             <!-- PENGAMBILAN -->
             <li>
-                <a href="{{ route('dashboard') }}">
+                <a href="/pengambilan">
                     Pengambilan
                 </a>
             </li>
@@ -407,54 +421,34 @@
 
         <!-- LOGOUT -->
         <div class="logout">
-
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-
-                <button type="submit">
-                    Logout
-                </button>
-
+                <button type="submit">Logout</button>
             </form>
-
         </div>
 
     </aside>
 
 
-    <!-- =========================
-         MAIN CONTENT
-    ========================= -->
+    <!-- MAIN CONTENT -->
 
     <main class="main">
 
         <!-- TOPBAR -->
-
         <div class="topbar">
-
             <div>
-
-                <h1>
-                    Dashboard Pelanggan
-                </h1>
-
-                <p>
-                    Kelola pesanan dan layanan jahit Anda di Jaitin.
-                </p>
-
+                <h1>Dashboard Pelanggan</h1>
+                <p>Kelola pesanan dan layanan jahit Anda di Jaitin.</p>
             </div>
 
             <div class="user-info">
                 {{ Auth::user()->nama }}
             </div>
-
         </div>
 
 
         <!-- WELCOME -->
-
         <div class="welcome">
-
             <h2>
                 Selamat datang, {{ Auth::user()->nama }} 👋
             </h2>
@@ -465,178 +459,84 @@
                 mengelola ukuran, pembayaran, riwayat revisi,
                 dan informasi pengambilan hasil jahit.
             </p>
-
         </div>
 
 
         <!-- SUMMARY -->
-
         <div class="cards">
 
             <div class="card">
-
-                <div class="card-number">
-                    0
-                </div>
-
-                <h3>
-                    Pesanan Aktif
-                </h3>
-
-                <p>
-                    Pesanan yang sedang diproses.
-                </p>
-
+                <div class="card-number">0</div>
+                <h3>Pesanan Aktif</h3>
+                <p>Pesanan yang sedang diproses.</p>
             </div>
 
-
             <div class="card">
-
-                <div class="card-number">
-                    0
-                </div>
-
-                <h3>
-                    Menunggu Pembayaran
-                </h3>
-
-                <p>
-                    Pesanan yang membutuhkan pembayaran.
-                </p>
-
+                <div class="card-number">0</div>
+                <h3>Menunggu Pembayaran</h3>
+                <p>Pesanan yang membutuhkan pembayaran.</p>
             </div>
 
-
             <div class="card">
-
-                <div class="card-number">
-                    0
-                </div>
-
-                <h3>
-                    Siap Diambil
-                </h3>
-
-                <p>
-                    Pesanan yang sudah selesai dan siap diambil.
-                </p>
-
+                <div class="card-number">0</div>
+                <h3>Siap Diambil</h3>
+                <p>Pesanan yang sudah selesai dan siap diambil.</p>
             </div>
 
         </div>
 
 
-        <!-- MENU CEPAT -->
-
+        <!-- MENU PELANGGAN -->
         <div class="section">
 
-            <h2>
-                Menu Pelanggan
-            </h2>
+            <h2>Menu Pelanggan</h2>
 
             <div class="quick-menu">
 
                 <!-- PESAN JASA -->
-
                 <a href="{{ route('pelanggan.pesanan.create') }}">
-
-                    <div class="icon">
-                        ✂️
-                    </div>
-
-                    <span>
-                        Pesan Jasa Jahit
-                    </span>
-
+                    <div class="icon">✂️</div>
+                    <span>Pesan Jasa Jahit</span>
                 </a>
-
 
                 <!-- PESANAN SAYA -->
-
                 <a href="{{ route('pelanggan.pesanan.index') }}">
-
-                    <div class="icon">
-                        📋
-                    </div>
-
-                    <span>
-                        Pesanan Saya
-                    </span>
-
+                    <div class="icon">📋</div>
+                    <span>Pesanan Saya</span>
                 </a>
 
-
-                <!-- UKURAN -->
-
-                <a href="{{ route('dashboard') }}">
-
-                    <div class="icon">
-                        📏
-                    </div>
-
-                    <span>
-                        Ukuran Saya
-                    </span>
-
+                <!-- UKURAN SAYA: LINK SUDAH DIPERBAIKI -->
+                <a href="{{ route('pelanggan.ukuran.index') }}">
+                    <div class="icon">📏</div>
+                    <span>Ukuran Saya</span>
                 </a>
-
 
                 <!-- PEMBAYARAN -->
-
-                <a href="{{ route('dashboard') }}">
-
-                    <div class="icon">
-                        💳
-                    </div>
-
-                    <span>
-                        Pembayaran
-                    </span>
-
+                <a href="/pesanan-saya">
+                    <div class="icon">💳</div>
+                    <span>Pembayaran</span>
                 </a>
-
 
                 <!-- RIWAYAT REVISI -->
-
-                <a href="{{ route('dashboard') }}">
-
-                    <div class="icon">
-                        🔄
-                    </div>
-
-                    <span>
-                        Riwayat Revisi
-                    </span>
-
+                <a href="/riwayat-revisi">
+                    <div class="icon">🔄</div>
+                    <span>Riwayat Revisi</span>
                 </a>
 
-
                 <!-- PENGAMBILAN -->
-
-                <a href="{{ route('dashboard') }}">
-
-                    <div class="icon">
-                        📦
-                    </div>
-
-                    <span>
-                        Pengambilan
-                    </span>
-
+                <a href="/pengambilan">
+                    <div class="icon">📦</div>
+                    <span>Pengambilan</span>
                 </a>
 
             </div>
-
         </div>
 
 
-        <!-- INFO -->
-
+        <!-- INFORMASI -->
         <div class="info">
 
-            <h2>
-                Informasi Jaitin
-            </h2>
+            <h2>Informasi Jaitin</h2>
 
             <p>
                 Untuk melakukan pemesanan jasa jahit, silakan pilih
