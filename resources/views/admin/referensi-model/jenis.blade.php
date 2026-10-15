@@ -568,6 +568,51 @@
                 <div class="gallery-grid">
 
                     @foreach ($referensiModels as $model)
+                        @php
+                            /*
+                             * Daftar jenis baru.
+                             * Jenis lama tetap disertakan agar data lama
+                             * masih dapat diedit tanpa mengubah database.
+                             */
+                            $pilihanJenis = [
+                                'kebaya' => [
+                                    'Kebaya Klasik',
+                                    'Kebaya Modern',
+                                    'Kebaya Minimalis',
+                                ],
+                                'dress' => [
+                                    'Dress Pesta',
+                                    'Dress Formal',
+                                    'Dress Casual',
+                                ],
+                                'perbaikan' => [
+                                    'Perbaikan Kerusakan & Robekan (Mending)',
+                                    'Penyesuaian Ukuran & Model (Alteration / Vermak)',
+                                    'Memperbaiki Jahitan',
+                                    'Mengganti Resleting',
+                                    'Mengecilkan Ukuran',
+                                    'Memperbesar Ukuran',
+                                    'Mengecilkan Pakaian',
+                                    'Memendekkan Pakaian',
+                                ],
+                            ];
+
+                            $jenisSaatIni = $model->jenis_model;
+                            $daftarJenisModel = $pilihanJenis[$model->kategori] ?? [];
+
+                            /*
+                             * Jika jenis_model pada database merupakan nilai lama
+                             * yang belum ada dalam daftar, tambahkan agar opsi
+                             * tersebut tetap terpilih saat formulir dibuka.
+                             */
+                            if (
+                                $jenisSaatIni &&
+                                !in_array($jenisSaatIni, $daftarJenisModel, true)
+                            ) {
+                                array_unshift($daftarJenisModel, $jenisSaatIni);
+                            }
+                        @endphp
+
                         <article class="model-card">
 
                             @if ($model->foto)
@@ -608,7 +653,7 @@
                                         action="{{ route('admin.referensi-model.destroy', $model->id) }}"
                                         method="POST"
                                         style="flex: 1;"
-                                        onsubmit="return confirm('Yakin ingin menghapus referensi {{ addslashes($model->nama_model) }}? Foto dan data referensi ini akan dihapus.')"
+                                        onsubmit="return confirm('Yakin ingin menghapus referensi ini? Foto dan data referensi akan dihapus.')"
                                     >
                                         @csrf
                                         @method('DELETE')
@@ -656,20 +701,24 @@
                                         <label for="kategori-{{ $model->id }}">
                                             Kategori
                                         </label>
+
                                         <select
                                             class="form-control"
                                             id="kategori-{{ $model->id }}"
                                             name="kategori"
+                                            data-current-type="{{ $jenisSaatIni }}"
                                             required
                                         >
                                             <option value="kebaya"
                                                 @selected($model->kategori === 'kebaya')>
                                                 Kebaya
                                             </option>
+
                                             <option value="dress"
                                                 @selected($model->kategori === 'dress')>
                                                 Dress
                                             </option>
+
                                             <option value="perbaikan"
                                                 @selected($model->kategori === 'perbaikan')>
                                                 Perbaikan
@@ -681,42 +730,26 @@
                                         <label for="jenis-{{ $model->id }}">
                                             Jenis Model
                                         </label>
+
                                         <select
                                             class="form-control"
                                             id="jenis-{{ $model->id }}"
                                             name="jenis_model"
                                             required
                                         >
-                                            @php
-                                                $pilihanJenis = [
-                                                    'kebaya' => [
-                                                        'Kebaya Klasik',
-                                                        'Kebaya Modern',
-                                                        'Kebaya Minimalis',
-                                                    ],
-                                                    'dress' => [
-                                                        'Dress Pesta',
-                                                        'Dress Formal',
-                                                        'Dress Casual',
-                                                    ],
-                                                    'perbaikan' => [
-                                                        'Memperbaiki Jahitan',
-                                                        'Mengganti Resleting',
-                                                        'Mengecilkan Ukuran',
-                                                        'Memperbesar Ukuran',
-                                                    ],
-                                                ];
-                                            @endphp
-
-                                            @foreach ($pilihanJenis[$model->kategori] ?? [] as $jenisPilihan)
+                                            @foreach ($daftarJenisModel as $jenisPilihan)
                                                 <option
                                                     value="{{ $jenisPilihan }}"
-                                                    @selected($model->jenis_model === $jenisPilihan)
+                                                    @selected($jenisSaatIni === $jenisPilihan)
                                                 >
                                                     {{ $jenisPilihan }}
                                                 </option>
                                             @endforeach
                                         </select>
+
+                                        <p class="help-text">
+                                            Pilih jenis model yang sesuai dengan kategori.
+                                        </p>
                                     </div>
 
                                     <div class="form-group">
@@ -739,6 +772,7 @@
                                         <label for="foto-{{ $model->id }}">
                                             Pilih Foto Pengganti (opsional)
                                         </label>
+
                                         <input
                                             class="form-control"
                                             id="foto-{{ $model->id }}"
@@ -746,6 +780,7 @@
                                             name="foto"
                                             accept="image/jpeg,image/png,image/jpg,image/webp"
                                         >
+
                                         <p class="help-text">
                                             Kosongkan jika tidak ingin mengganti foto.
                                             Format JPG, PNG, atau WEBP.
@@ -756,6 +791,7 @@
                                         <label for="deskripsi-{{ $model->id }}">
                                             Deskripsi
                                         </label>
+
                                         <textarea
                                             class="form-control"
                                             id="deskripsi-{{ $model->id }}"
@@ -841,40 +877,61 @@
         }
     }
 
+    /*
+     * Pilihan jenis baru untuk setiap kategori.
+     * Nilai lama tetap dipertahankan supaya kompatibel dengan data sebelumnya.
+     */
+    const pilihanJenisPerKategori = {
+        kebaya: [
+            'Kebaya Klasik',
+            'Kebaya Modern',
+            'Kebaya Minimalis'
+        ],
+        dress: [
+            'Dress Pesta',
+            'Dress Formal',
+            'Dress Casual'
+        ],
+        perbaikan: [
+            'Perbaikan Kerusakan & Robekan (Mending)',
+            'Penyesuaian Ukuran & Model (Alteration / Vermak)',
+            'Memperbaiki Jahitan',
+            'Mengganti Resleting',
+            'Mengecilkan Ukuran',
+            'Memperbesar Ukuran',
+            'Mengecilkan Pakaian',
+            'Memendekkan Pakaian'
+        ]
+    };
+
     document.querySelectorAll('[id^="kategori-"]').forEach(function (kategoriSelect) {
         kategoriSelect.addEventListener('change', function () {
             const id = this.id.replace('kategori-', '');
             const jenisSelect = document.getElementById('jenis-' + id);
 
-            const pilihanJenis = {
-                kebaya: [
-                    'Kebaya Klasik',
-                    'Kebaya Modern',
-                    'Kebaya Minimalis'
-                ],
-                dress: [
-                    'Dress Pesta',
-                    'Dress Formal',
-                    'Dress Casual'
-                ],
-                perbaikan: [
-                    'Memperbaiki Jahitan',
-                    'Mengganti Resleting',
-                    'Mengecilkan Ukuran',
-                    'Memperbesar Ukuran'
-                ]
-            };
+            if (!jenisSelect) {
+                return;
+            }
 
-            const daftar = pilihanJenis[this.value] || [];
+            const kategoriBaru = this.value;
+            const daftarJenis = pilihanJenisPerKategori[kategoriBaru] || [];
 
             jenisSelect.innerHTML = '';
 
-            daftar.forEach(function (namaJenis) {
+            daftarJenis.forEach(function (namaJenis) {
                 const option = document.createElement('option');
                 option.value = namaJenis;
                 option.textContent = namaJenis;
                 jenisSelect.appendChild(option);
             });
+
+            /*
+             * Saat kategori diganti, jenis pertama pada kategori baru
+             * dipilih secara otomatis.
+             */
+            if (daftarJenis.length > 0) {
+                jenisSelect.value = daftarJenis[0];
+            }
         });
     });
 </script>

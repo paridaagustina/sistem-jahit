@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\PelangganRatingController;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\KaryawanDashboardController;
@@ -418,5 +420,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/ukuran-saya/{id}', [
         UkuranController::class, 'destroyPelanggan'
     ])->name('pelanggan.ukuran.destroy');
+
+    Route::post('/pesanan-saya/{id}/rating', [
+    PelangganRatingController::class,
+    'store'
+])->name('pelanggan.rating.store');
 
 });

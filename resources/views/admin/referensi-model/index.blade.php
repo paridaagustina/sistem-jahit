@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -164,6 +163,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            min-width: 0;
         }
 
         .upload-group label {
@@ -414,14 +414,17 @@
                         <label for="kategori">Kategori Utama</label>
                         <select id="kategori" name="kategori" required>
                             <option value="">Pilih kategori</option>
+
                             <option value="kebaya"
                                 {{ old('kategori') === 'kebaya' ? 'selected' : '' }}>
                                 Kebaya
                             </option>
+
                             <option value="dress"
                                 {{ old('kategori') === 'dress' ? 'selected' : '' }}>
                                 Dress
                             </option>
+
                             <option value="perbaikan"
                                 {{ old('kategori') === 'perbaikan' ? 'selected' : '' }}>
                                 Perbaikan Pakaian
@@ -430,7 +433,7 @@
                     </div>
 
                     <div class="upload-group">
-                        <label for="jenis_model">Jenis Model</label>
+                        <label for="jenis_model">Jenis Model / Layanan</label>
                         <select id="jenis_model" name="jenis_model" required>
                             <option value="">Pilih jenis model</option>
                         </select>
@@ -499,8 +502,9 @@
                 <div class="category-icon">🧵</div>
                 <h3>Perbaikan Pakaian</h3>
                 <p>
-                    Jelajahi layanan mengecilkan pakaian, memendekkan pakaian,
-                    dan mengganti resleting.
+                    Jelajahi dua kelompok layanan, yaitu perbaikan kerusakan
+                    dan robekan (mending), serta penyesuaian ukuran dan model
+                    (alteration atau vermak).
                 </p>
                 <a class="category-button"
                    href="{{ route('admin.referensi-model.kategori', ['kategori' => 'perbaikan']) }}">
@@ -526,15 +530,22 @@
             { value: 'Kebaya Modern', label: 'Kebaya Modern' },
             { value: 'Kebaya Minimalis', label: 'Kebaya Minimalis' }
         ],
+
         dress: [
             { value: 'Dress Pesta', label: 'Dress Pesta' },
             { value: 'Dress Formal', label: 'Dress Formal' },
             { value: 'Dress Casual', label: 'Dress Casual' }
         ],
+
         perbaikan: [
-            { value: 'Mengecilkan Pakaian', label: 'Mengecilkan Pakaian' },
-            { value: 'Memendekkan Pakaian', label: 'Memendekkan Pakaian' },
-            { value: 'Mengganti Resleting', label: 'Mengganti Resleting' }
+            {
+                value: 'Perbaikan Kerusakan & Robekan (Mending)',
+                label: 'Perbaikan Kerusakan & Robekan (Mending)'
+            },
+            {
+                value: 'Penyesuaian Ukuran & Model (Alteration / Vermak)',
+                label: 'Penyesuaian Ukuran & Model (Alteration / Vermak)'
+            }
         ]
     };
 
@@ -559,6 +570,7 @@
 
         daftarJenis.forEach(function (jenis) {
             const option = document.createElement('option');
+
             option.value = jenis.value;
             option.textContent = jenis.label;
 
