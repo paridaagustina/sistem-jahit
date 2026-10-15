@@ -359,9 +359,7 @@
             <li>
                 <a href="{{ url('/riwayat-revisi') }}">Riwayat Revisi</a>
             </li>
-            <li>
-                <a href="{{ url('/pengambilan') }}">Pengambilan</a>
-            </li>
+
         </ul>
 
         <div class="logout">

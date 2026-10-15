@@ -253,12 +253,6 @@
 
             <li>
                 <a href="{{ route('dashboard') }}">
-                    Referensi Model
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('dashboard') }}">
                     Pembayaran
                 </a>
             </li>
@@ -269,17 +263,7 @@
                 </a>
             </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Notifikasi
-                </a>
-            </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Pengambilan
-                </a>
-            </li>
 
         </ul>
 

@@ -410,12 +410,6 @@
                 </a>
             </li>
 
-            <!-- PENGAMBILAN -->
-            <li>
-                <a href="/pengambilan">
-                    Pengambilan
-                </a>
-            </li>
 
         </ul>
 

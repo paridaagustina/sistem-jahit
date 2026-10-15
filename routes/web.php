@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -14,6 +13,7 @@ use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminPembayaranController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RevisiController;
+use App\Http\Controllers\PelangganRevisiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\UkuranController;
 
@@ -134,11 +134,29 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     | PEMBAYARAN PELANGGAN
     |--------------------------------------------------------------------------
+    | Tombol bayar tetap berada di Pesanan Saya.
+    | Menu pembayaran digunakan untuk melihat riwayat transaksi.
+    |--------------------------------------------------------------------------
     */
 
     Route::get('/pesanan-saya/{id}/bayar', [
         PaymentController::class, 'pay'
     ])->name('pelanggan.pembayaran.pay');
+
+    Route::get('/pembayaran', [
+        PembayaranController::class, 'riwayatPelanggan'
+    ])->name('pelanggan.pembayaran.index');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RIWAYAT REVISI PELANGGAN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/riwayat-revisi', [
+        PelangganRevisiController::class, 'index'
+    ])->name('pelanggan.revisi.index');
 
 
     /*
@@ -382,8 +400,6 @@ Route::middleware('auth')->group(function () {
     /*
     |--------------------------------------------------------------------------
     | UKURAN SAYA PELANGGAN
-    |--------------------------------------------------------------------------
-    | Pelanggan dapat melihat, menambah, mengubah, dan menghapus ukuran sendiri.
     |--------------------------------------------------------------------------
     */
 
