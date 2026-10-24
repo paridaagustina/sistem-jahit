@@ -1,529 +1,474 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.admin')
 
-    <title>Edit Pesanan - Jaitin</title>
+@section('title', 'Edit Harga Pesanan - JAITIN')
+@section('page-title', 'Edit Harga Pesanan')
+@section('page-description', 'Perbarui total harga pesanan pelanggan.')
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+@section('styles')
+<style>
+    .edit-order-page {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        color: #493936;
+    }
+
+    .edit-order-hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 27px;
+        border-radius: 20px;
+        color: #fff;
+        background: linear-gradient(
+            120deg,
+            #b8898d 0%,
+            #c99b9d 58%,
+            #dfb9ad 100%
+        );
+        box-shadow: 0 12px 28px rgba(153, 103, 109, .14);
+    }
+
+    .edit-order-hero h2 {
+        margin: 0 0 8px;
+        color: #fff;
+        font-size: 25px;
+        font-weight: 750;
+    }
+
+    .edit-order-hero p {
+        margin: 0;
+        color: rgba(255,255,255,.88);
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .edit-order-hero-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 65px;
+        height: 65px;
+        border: 1px solid rgba(255,255,255,.3);
+        border-radius: 18px;
+        background: rgba(255,255,255,.15);
+        font-size: 27px;
+    }
+
+    .edit-order-alert {
+        padding: 14px 17px;
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .edit-order-alert.success {
+        border: 1px solid #d5e8d4;
+        background: #edf6ed;
+        color: #426b47;
+    }
+
+    .edit-order-alert.error {
+        border: 1px solid #f0d3d1;
+        background: #fff0ef;
+        color: #985052;
+    }
+
+    .edit-order-alert ul {
+        margin: 7px 0 0;
+        padding-left: 20px;
+    }
+
+    .edit-order-card {
+        overflow: hidden;
+        border: 1px solid #eee3de;
+        border-radius: 19px;
+        background: #fffaf6;
+        box-shadow: 0 10px 30px rgba(103, 72, 65, .055);
+    }
+
+    .edit-order-card-header {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 22px 25px;
+        border-bottom: 1px solid #eee3de;
+    }
+
+    .edit-order-card-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        border-radius: 13px;
+        background: #f5e7e7;
+        color: #96696e;
+        font-size: 18px;
+    }
+
+    .edit-order-card-header h3 {
+        margin: 0 0 5px;
+        color: #493936;
+        font-size: 15px;
+        font-weight: 750;
+    }
+
+    .edit-order-card-header p {
+        margin: 0;
+        color: #927f7b;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .edit-order-card-body {
+        padding: 25px;
+    }
+
+    .edit-order-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .edit-order-field {
+        min-width: 0;
+    }
+
+    .edit-order-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .edit-order-field label {
+        display: block;
+        margin-bottom: 8px;
+        color: #705b55;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .edit-order-value {
+        display: block;
+        width: 100%;
+        min-height: 43px;
+        padding: 12px 14px;
+        border: 1px solid #eee3de;
+        border-radius: 10px;
+        background: #f8f1eb;
+        color: #705b55;
+        font-size: 13px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .edit-order-value.status {
+        display: inline-flex;
+        align-items: center;
+        width: auto;
+        min-height: auto;
+        border-radius: 30px;
+        background: #f1e2e7;
+        color: #936070;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .edit-order-value.status::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        margin-right: 8px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .edit-order-price-box {
+        padding: 20px;
+        border: 1px solid #ead5d6;
+        border-radius: 15px;
+        background: #fff4f1;
+    }
+
+    .edit-order-price-box label {
+        display: block;
+        margin-bottom: 10px;
+        color: #79575a;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .edit-order-price-input {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        border: 1px solid #d9c1b7;
+        border-radius: 11px;
+        background: #fff;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .edit-order-price-input:focus-within {
+        border-color: #b8898d;
+        box-shadow: 0 0 0 3px rgba(184,137,141,.13);
+    }
+
+    .edit-order-price-prefix {
+        padding: 13px 15px;
+        border-right: 1px solid #eee3de;
+        background: #f8efea;
+        color: #96696e;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .edit-order-price-input input {
+        width: 100%;
+        min-width: 0;
+        padding: 13px 15px;
+        border: 0;
+        outline: none;
+        background: transparent;
+        color: #493936;
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 750;
+    }
+
+    .edit-order-help {
+        margin-top: 9px;
+        color: #927f7b;
+        font-size: 11px;
+        line-height: 1.7;
+    }
+
+    .edit-order-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #eee3de;
+    }
+
+    .edit-order-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 11px 17px;
+        border: 0;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .edit-order-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .edit-order-btn.back {
+        background: #f0e4dc;
+        color: #705b55;
+    }
+
+    .edit-order-btn.save {
+        background: #b8898d;
+        color: #fff;
+    }
+
+    .edit-order-btn.save:hover {
+        background: #9f7378;
+    }
+
+    @media (max-width: 650px) {
+        .edit-order-hero {
+            padding: 21px;
         }
 
-        body {
-            background: #f8f1eb;
-            color: #4b3832;
-        }
-
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 250px;
-            background: #b8898d;
-            color: white;
-            padding: 25px 18px;
-        }
-
-        .logo-area {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .logo-circle {
-            width: 75px;
-            height: 75px;
-            margin: auto;
-            border-radius: 50%;
-            background: #fffaf5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .logo-circle img {
-            width: 65px;
-            height: 65px;
-            object-fit: contain;
-        }
-
-        .brand {
-            margin-top: 10px;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .menu {
-            list-style: none;
-        }
-
-        .menu li {
-            margin-bottom: 8px;
-        }
-
-        .menu a {
-            display: block;
-            padding: 13px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-        }
-
-        .menu a:hover,
-        .menu a.active {
-            background: #9f7378;
-        }
-
-        .logout {
-            margin-top: 30px;
-        }
-
-        .logout button {
-            width: 100%;
-            border: none;
-            background: #8f666b;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .main {
-            flex: 1;
-            padding: 30px 35px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .topbar h1 {
-            font-size: 28px;
-        }
-
-        .topbar p {
-            margin-top: 6px;
-            color: #806e69;
-        }
-
-        .admin-info {
-            background: #fffaf5;
-            padding: 10px 18px;
-            border-radius: 20px;
-            color: #8e6268;
-        }
-
-        .form-box {
-            max-width: 850px;
-            background: #fffaf5;
-            border: 1px solid #ead6ca;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(120, 90, 80, 0.06);
-        }
-
-        .form-box h2 {
-            margin-bottom: 25px;
+        .edit-order-hero h2 {
             font-size: 21px;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .edit-order-hero-icon {
+            width: 49px;
+            height: 49px;
+            font-size: 21px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        .edit-order-card-header,
+        .edit-order-card-body {
+            padding: 18px;
         }
 
-        .form-group.full {
-            grid-column: 1 / -1;
+        .edit-order-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
         }
 
-        label {
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #5d4843;
+        .edit-order-field.full {
+            grid-column: auto;
         }
 
-        input,
-        select {
-            padding: 12px 13px;
-            border: 1px solid #d9c1b7;
-            border-radius: 9px;
-            background: white;
-            color: #4b3832;
-            outline: none;
+        .edit-order-actions {
+            flex-direction: column-reverse;
         }
 
-        input:focus,
-        select:focus {
-            border-color: #b8898d;
+        .edit-order-btn {
+            width: 100%;
+            box-sizing: border-box;
         }
+    }
+</style>
+@endsection
 
-        .button-area {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 25px;
-        }
+@section('content')
+<div class="edit-order-page">
 
-        .btn {
-            padding: 11px 20px;
-            border-radius: 9px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
+    <section class="edit-order-hero">
+        <div>
+            <h2>Edit Harga Pesanan</h2>
+            <p>
+                Pesanan #{{ $pesanan->id_pesanan }}.
+                Admin hanya dapat mengubah total harga.
+                Status pengerjaan dikelola oleh karyawan.
+            </p>
+        </div>
 
-        .btn-kembali {
-            background: #ead6ca;
-            color: #5d4843;
-        }
+        <div class="edit-order-hero-icon" aria-hidden="true">
+            <i class="fa-solid fa-money-bill-wave"></i>
+        </div>
+    </section>
 
-        .btn-simpan {
-            background: #b8898d;
-            color: white;
-        }
+    @if (session('success'))
+        <div class="edit-order-alert success" role="status">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ session('success') }}
+        </div>
+    @endif
 
-        .btn-simpan:hover {
-            background: #9f7378;
-        }
+    @if ($errors->any())
+        <div class="edit-order-alert error" role="alert">
+            <strong>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Periksa kembali data berikut:
+            </strong>
 
-        .error {
-            margin-bottom: 20px;
-            padding: 12px 15px;
-            background: #f5dede;
-            color: #8f4f55;
-            border-radius: 9px;
-        }
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        @media (max-width: 800px) {
-            .sidebar {
-                width: 210px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.full {
-                grid-column: auto;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-
-        <div class="logo-area">
-
-            <div class="logo-circle">
-                <img src="{{ asset('images/logo-jaitin.png') }}"
-                     alt="Logo Jaitin">
+    <section class="edit-order-card">
+        <div class="edit-order-card-header">
+            <div class="edit-order-card-icon">
+                <i class="fa-solid fa-receipt"></i>
             </div>
-
-            <div class="brand">Jaitin</div>
-
-        </div>
-
-        <ul class="menu">
-
-            <li>
-                <a href="{{ route('admin.dashboard') }}">
-                    Dashboard
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('admin.pesanan.index') }}" class="active">
-                    Data Pesanan
-                </a>
-            </li>
-
-            <li>
-    <a href="{{ route('admin.pelanggan.index') }}">
-        Data Pelanggan
-    </a>
-</li>
-
-            <li>
-                <a href="#">
-                    Data Ukuran
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Referensi Model
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Pembayaran
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Status Pengerjaan
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Revisi
-                </a>
-            </li>
-
-        </ul>
-
-        <div class="logout">
-
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-
-                <button type="submit">
-                    Logout
-                </button>
-
-            </form>
-
-        </div>
-
-    </aside>
-
-
-    <!-- MAIN -->
-    <main class="main">
-
-        <div class="topbar">
 
             <div>
-                <h1>Edit Pesanan</h1>
-                <p>Perbarui informasi pesanan pelanggan.</p>
+                <h3>Informasi Pesanan</h3>
+                <p>Informasi berikut hanya dapat dilihat oleh admin.</p>
             </div>
-
-            <div class="admin-info">
-                Admin
-            </div>
-
         </div>
 
+        <div class="edit-order-card-body">
 
-        <div class="form-box">
+            <div class="edit-order-grid">
 
-            <h2>Informasi Pesanan</h2>
-
-            @if ($errors->any())
-
-                <div class="error">
-
-                    <strong>Periksa kembali data berikut:</strong>
-
-                    <ul style="margin-top: 8px; padding-left: 20px;">
-
-                        @foreach ($errors->all() as $error)
-
-                            <li>{{ $error }}</li>
-
-                        @endforeach
-
-                    </ul>
-
+                <div class="edit-order-field">
+                    <label>ID Pesanan</label>
+                    <div class="edit-order-value">
+                        #{{ $pesanan->id_pesanan }}
+                    </div>
                 </div>
 
-            @endif
+                <div class="edit-order-field">
+                    <label>Pelanggan</label>
+                    <div class="edit-order-value">
+                        {{ $pesanan->user->nama
+                            ?? $pesanan->user->name
+                            ?? 'Pelanggan' }}
+                    </div>
+                </div>
 
+                <div class="edit-order-field">
+                    <label>Jenis Pakaian</label>
+                    <div class="edit-order-value">
+                        {{ $pesanan->jenis_pakaian ?? '-' }}
+                    </div>
+                </div>
+
+                <div class="edit-order-field">
+                    <label>Jumlah</label>
+                    <div class="edit-order-value">
+                        {{ $pesanan->jumlah ?? 0 }} pcs
+                    </div>
+                </div>
+
+                <div class="edit-order-field">
+                    <label>Tanggal Pesan</label>
+                    <div class="edit-order-value">
+                        {{ $pesanan->tanggal_pesan
+                            ? \Carbon\Carbon::parse($pesanan->tanggal_pesan)->format('d-m-Y H:i')
+                            : '-' }}
+                    </div>
+                </div>
+
+                <div class="edit-order-field">
+                    <label>Tanggal Harapan Selesai</label>
+                    <div class="edit-order-value">
+                        {{ $pesanan->tanggal_harapan
+                            ? \Carbon\Carbon::parse($pesanan->tanggal_harapan)->format('d-m-Y')
+                            : '-' }}
+                    </div>
+                </div>
+
+                <div class="edit-order-field">
+                    <label>Estimasi Selesai</label>
+                    <div class="edit-order-value">
+                        {{ $pesanan->estimasi_selesai
+                            ? \Carbon\Carbon::parse($pesanan->estimasi_selesai)->format('d-m-Y')
+                            : 'Belum ditentukan oleh karyawan' }}
+                    </div>
+                </div>
+
+                <div class="edit-order-field">
+                    <label>Status Pengerjaan</label>
+                    <div>
+                        <span class="edit-order-value status">
+                            {{ $pesanan->status_pengerjaan ?? 'Menunggu Produksi' }}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
 
             <form
                 action="{{ route('admin.pesanan.update', $pesanan->id_pesanan) }}"
                 method="POST"
             >
-
                 @csrf
                 @method('PUT')
 
+                <div class="edit-order-price-box" style="margin-top: 25px;">
+                    <label for="total_harga">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        Total Harga Pesanan
+                    </label>
 
-                <div class="form-grid">
-
-                    <!-- PELANGGAN -->
-                    <div class="form-group full">
-
-                        <label for="id_user">
-                            Pelanggan
-                        </label>
-
-                        <select name="id_user" id="id_user" required>
-
-                            <option value="">
-                                -- Pilih Pelanggan --
-                            </option>
-
-                            @foreach ($pelanggan as $user)
-
-                                <option
-                                    value="{{ $user->id_user }}"
-                                    {{ old('id_user', $pesanan->id_user) == $user->id_user ? 'selected' : '' }}
-                                >
-
-                                    {{ $user->nama }} - {{ $user->email }}
-
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- JENIS PAKAIAN -->
-                    <div class="form-group">
-
-                        <label for="jenis_pakaian">
-                            Jenis Pakaian
-                        </label>
-
-                        <input
-                            type="text"
-                            name="jenis_pakaian"
-                            id="jenis_pakaian"
-                            value="{{ old('jenis_pakaian', $pesanan->jenis_pakaian) }}"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- JUMLAH -->
-                    <div class="form-group">
-
-                        <label for="jumlah">
-                            Jumlah
-                        </label>
-
-                        <input
-                            type="number"
-                            name="jumlah"
-                            id="jumlah"
-                            value="{{ old('jumlah', $pesanan->jumlah) }}"
-                            min="1"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- TANGGAL PESAN -->
-                    <div class="form-group">
-
-                        <label for="tanggal_pesan">
-                            Tanggal Pesan
-                        </label>
-
-                        <input
-                            type="datetime-local"
-                            name="tanggal_pesan"
-                            id="tanggal_pesan"
-                            value="{{ old('tanggal_pesan', $pesanan->tanggal_pesan ? date('Y-m-d\TH:i', strtotime($pesanan->tanggal_pesan)) : '') }}"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- TANGGAL HARAPAN -->
-                    <div class="form-group">
-
-                        <label for="tanggal_harapan">
-                            Tanggal Harapan Selesai
-                        </label>
-
-                        <input
-                            type="date"
-                            name="tanggal_harapan"
-                            id="tanggal_harapan"
-                            value="{{ old('tanggal_harapan', $pesanan->tanggal_harapan) }}"
-                        >
-
-                    </div>
-
-
-                    <!-- ESTIMASI SELESAI -->
-                    <div class="form-group">
-
-                        <label for="estimasi_selesai">
-                            Estimasi Selesai
-                        </label>
-
-                        <input
-                            type="date"
-                            name="estimasi_selesai"
-                            id="estimasi_selesai"
-                            value="{{ old('estimasi_selesai', $pesanan->estimasi_selesai) }}"
-                        >
-
-                    </div>
-
-
-                    <!-- STATUS -->
-                    <div class="form-group">
-
-                        <label for="status">
-                            Status Pesanan
-                        </label>
-
-                        <select name="status" id="status" required>
-
-                            @foreach ([
-                                'Menunggu',
-                                'Diproses',
-                                'Sedang Dikerjakan',
-                                'Selesai',
-                                'Diambil'
-                            ] as $status)
-
-                                <option
-                                    value="{{ $status }}"
-                                    {{ old('status', $pesanan->status) == $status ? 'selected' : '' }}
-                                >
-                                    {{ $status }}
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- TOTAL HARGA -->
-                    <div class="form-group full">
-
-                        <label for="total_harga">
-                            Total Harga
-                        </label>
+                    <div class="edit-order-price-input">
+                        <span class="edit-order-price-prefix">Rp</span>
 
                         <input
                             type="number"
@@ -531,39 +476,37 @@
                             id="total_harga"
                             value="{{ old('total_harga', $pesanan->total_harga) }}"
                             min="0"
+                            step="1"
+                            placeholder="Masukkan total harga"
                             required
+                            autofocus
                         >
-
                     </div>
 
+                    <p class="edit-order-help">
+                        Masukkan total biaya pesanan dalam rupiah.
+                        Kolom lain tidak dikirim untuk diperbarui.
+                    </p>
                 </div>
 
-
-                <div class="button-area">
-
+                <div class="edit-order-actions">
                     <a
                         href="{{ route('admin.pesanan.index') }}"
-                        class="btn btn-kembali"
+                        class="edit-order-btn back"
                     >
+                        <i class="fa-solid fa-arrow-left"></i>
                         Kembali
                     </a>
 
-                    <button
-                        type="submit"
-                        class="btn btn-simpan"
-                    >
-                        Simpan Perubahan
+                    <button type="submit" class="edit-order-btn save">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Simpan Harga
                     </button>
-
                 </div>
-
             </form>
 
         </div>
-
-    </main>
+    </section>
 
 </div>
-
-</body>
-</html>
+@endsection

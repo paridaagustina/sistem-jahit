@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\KaryawanDashboardController;
-
+use App\Http\Controllers\PelangganDashboardController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PelangganPesananController;
@@ -16,7 +16,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RevisiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\UkuranController;
-
+use App\Http\Controllers\PelangganUkuranController;
 use App\Http\Controllers\KaryawanRevisiController;
 use App\Http\Controllers\KaryawanStatusPengerjaanController;
 
@@ -423,4 +423,123 @@ Route::middleware('auth')->group(function () {
         'update'
     ])->name('admin.status-pengerjaan.update');
 
+});
+
+
+Route::view('/katalog-model', 'user.katalog')
+    ->name('user.katalog');
+
+Route::view('/layanan-jahit', 'user.layanan')
+    ->name('user.layanan');
+
+Route::view('/cara-pemesanan', 'user.carapemesanan')
+    ->name('user.carapemesanan');
+
+Route::view('/tentang-kami', 'user.tentang_kami')
+    ->name('user.tentang_kami');
+
+Route::view('/kontak', 'user.kontak')
+    ->name('user.kontak');
+Route::view('/', 'user.beranda')
+    ->name('user.beranda');
+
+
+
+    Route::middleware(['auth', 'role:karyawan'])
+    ->prefix('karyawan')
+    ->name('karyawan.')
+    ->group(function () {
+        Route::get(
+            '/pengerjaan',
+            [KaryawanStatusPengerjaanController::class, 'index']
+        )->name('pengerjaan.index');
+
+        Route::patch(
+            '/pengerjaan/{id}',
+            [KaryawanStatusPengerjaanController::class, 'update']
+        )->name('pengerjaan.update');
+    });
+
+    /*
+|--------------------------------------------------------------------------
+| UKURAN SAYA - PELANGGAN
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| UKURAN SAYA - PELANGGAN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/ukuran-saya', [
+    PelangganUkuranController::class,
+    'index'
+])->name('pelanggan.ukuran.index');
+
+Route::post('/ukuran-saya', [
+    PelangganUkuranController::class,
+    'store'
+])->name('pelanggan.ukuran.store');
+
+Route::put('/ukuran-saya/{id}', [
+    PelangganUkuranController::class,
+    'update'
+])->name('pelanggan.ukuran.update');
+
+Route::delete('/ukuran-saya/{id}', [
+    PelangganUkuranController::class,
+    'destroy'
+])->name('pelanggan.ukuran.destroy');
+
+
+
+/*
+|--------------------------------------------------------------------------
+| PEMBAYARAN SAYA - PELANGGAN
+|--------------------------------------------------------------------------
+*/
+
+
+/*
+|--------------------------------------------------------------------------
+| ROUTE KHUSUS PELANGGAN
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:pelanggan'])->group(function () {
+
+    // Daftar pembayaran pelanggan
+    Route::get('/pembayaran-saya', [
+        PembayaranController::class,
+        'indexPelanggan'
+    ])->name('pelanggan.pembayaran.index');
+
+    // Halaman pembayaran pesanan pelanggan
+    Route::get('/pesanan-saya/{id}/bayar', [
+        PaymentController::class,
+        'pay'
+    ])->name('pelanggan.pembayaran.pay');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| RIWAYAT REVISI PELANGGAN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/revisi-saya', [
+    RevisiController::class,
+    'riwayatPelanggan'
+])->name('pelanggan.revisi.index');
+
+Route::get('/pesanan-saya/{id}/bayar', [PaymentController::class, 'pay'])
+    ->middleware('auth')
+    ->name('pelanggan.pembayaran.pay');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [PelangganDashboardController::class, 'index'])
+        ->name('dashboard');
 });

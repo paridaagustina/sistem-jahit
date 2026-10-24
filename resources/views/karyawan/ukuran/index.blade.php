@@ -1,639 +1,464 @@
-<!DOCTYPE html>
-<html lang="id">
 
-<head>
+@extends('layouts.karyawan')
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@section('title', 'Ukuran Pelanggan - JAITIN')
+@section('page-title', 'Ukuran Pelanggan')
+@section('page-description', 'Kelola data ukuran pelanggan untuk kebutuhan pengerjaan jahit.')
 
-    <title>Ukuran Pelanggan - Jaitin</title>
+@push('styles')
+<style>
+    .ukuran-page {
+        color: #493b3b;
+    }
 
-    <style>
+    .ukuran-intro {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 22px;
+        margin-bottom: 24px;
+        border: 1px solid #f0dedb;
+        border-radius: 18px;
+        background: linear-gradient(120deg, #f7e9e7, #fffaf5);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+    .ukuran-intro-icon {
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        background: #fff;
+        color: #9f7378;
+    }
+
+    .ukuran-intro-icon .material-symbols-rounded {
+        font-size: 28px;
+    }
+
+    .ukuran-intro h2 {
+        margin: 0 0 6px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #493b3b;
+    }
+
+    .ukuran-intro p {
+        margin: 0;
+        color: #8c7b7b;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .ukuran-section {
+        padding: 25px;
+        border: 1px solid #eee1dc;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(99, 65, 65, .06);
+    }
+
+    .ukuran-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 23px;
+    }
+
+    .ukuran-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .ukuran-heading-icon {
+        width: 43px;
+        height: 43px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: #f5e5e5;
+        color: #80575d;
+    }
+
+    .ukuran-heading-icon .material-symbols-rounded {
+        font-size: 23px;
+    }
+
+    .ukuran-heading h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 800;
+        color: #493b3b;
+    }
+
+    .ukuran-heading p {
+        margin: 5px 0 0;
+        color: #8c7b7b;
+        font-size: 12px;
+    }
+
+    .btn-tambah-ukuran {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 12px 16px;
+        border-radius: 11px;
+        background: #b8898d;
+        color: #fff;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: background .2s, transform .2s;
+    }
+
+    .btn-tambah-ukuran:hover {
+        background: #9f7378;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .btn-tambah-ukuran .material-symbols-rounded {
+        font-size: 19px;
+    }
+
+    .ukuran-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #eee1dc;
+        border-radius: 12px;
+    }
+
+    .ukuran-table {
+        width: 100%;
+        min-width: 950px;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .ukuran-table thead {
+        background: #f7eeea;
+    }
+
+    .ukuran-table th {
+        padding: 15px 14px;
+        color: #725b57;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .ukuran-table td {
+        padding: 15px 14px;
+        border-top: 1px solid #f1e8e4;
+        color: #655453;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .ukuran-table tbody tr {
+        transition: background .2s;
+    }
+
+    .ukuran-table tbody tr:hover {
+        background: #fffaf8;
+    }
+
+    .ukuran-number {
+        color: #8c7b7b !important;
+        font-weight: 600;
+    }
+
+    .ukuran-customer {
+        color: #493b3b !important;
+        font-weight: 700;
+    }
+
+    .ukuran-value {
+        color: #71585a;
+        font-weight: 600;
+    }
+
+    .ukuran-unit {
+        margin-left: 3px;
+        color: #8c7b7b;
+        font-size: 10px;
+    }
+
+    .ukuran-date {
+        color: #8c7b7b !important;
+    }
+
+    .btn-edit-ukuran {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 8px 11px;
+        border: 1px solid #eedbd9;
+        border-radius: 9px;
+        background: #fbefee;
+        color: #80575d;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 700;
+        transition: background .2s;
+    }
+
+    .btn-edit-ukuran:hover {
+        background: #f1dedd;
+        color: #80575d;
+    }
+
+    .btn-edit-ukuran .material-symbols-rounded {
+        font-size: 16px;
+    }
+
+    .ukuran-empty {
+        padding: 50px 20px !important;
+        text-align: center;
+        white-space: normal !important;
+    }
+
+    .ukuran-empty-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        color: #8c7b7b;
+    }
+
+    .ukuran-empty-content > .material-symbols-rounded {
+        font-size: 42px;
+        color: #d1afb1;
+    }
+
+    .ukuran-empty-content strong {
+        color: #493b3b;
+        font-size: 13px;
+    }
+
+    .ukuran-empty-content span:last-child {
+        font-size: 12px;
+    }
+
+    .ukuran-table-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 16px;
+        color: #8c7b7b;
+        font-size: 11px;
+    }
+
+    .ukuran-table-footer strong {
+        color: #493b3b;
+    }
+
+    .ukuran-table-hint {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .ukuran-table-hint .material-symbols-rounded {
+        font-size: 17px;
+    }
+
+    @media (max-width: 700px) {
+        .ukuran-section {
+            padding: 18px 14px;
         }
 
-        body {
-            background: #f8f1eb;
-            color: #4b3832;
-        }
-
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* =========================
-           SIDEBAR
-        ========================= */
-
-        .sidebar {
-            width: 250px;
-            background: #b8898d;
-            color: white;
-            padding: 25px 18px;
-            min-height: 100vh;
-            display: flex;
+        .ukuran-section-header {
+            align-items: stretch;
             flex-direction: column;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1000;
         }
 
-        .logo-area {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .logo-circle {
-            width: 75px;
-            height: 75px;
-            margin: auto;
-            border-radius: 50%;
-            background: #fffaf5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .logo-circle img {
-            width: 65px;
-            height: 65px;
-            object-fit: contain;
-        }
-
-        .brand {
-            margin-top: 10px;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .role {
-            margin-top: 5px;
-            font-size: 13px;
-            opacity: 0.85;
-        }
-
-        /* =========================
-           MENU
-        ========================= */
-
-        .menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .btn-tambah-ukuran {
             width: 100%;
         }
 
-        .menu li {
-            list-style: none;
-            margin-bottom: 8px;
-            width: 100%;
+        .ukuran-table-footer {
+            align-items: flex-start;
+            flex-direction: column;
         }
 
-        .menu li a {
-            display: block;
-            width: 100%;
-            padding: 13px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: background 0.2s ease;
-            cursor: pointer;
-            position: relative;
-            z-index: 1001;
+        .ukuran-intro {
+            padding: 16px;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .ukuran-intro {
+            align-items: flex-start;
+            gap: 11px;
         }
 
-        .menu li a:hover {
-            background: #9f7378;
+        .ukuran-intro-icon {
+            width: 43px;
+            height: 43px;
         }
 
-        .menu li a.active {
-            background: #9f7378;
-        }
-
-        /* =========================
-           LOGOUT
-        ========================= */
-
-        .logout {
-            margin-top: auto;
-            padding-top: 30px;
-            width: 100%;
-        }
-
-        .logout form {
-            width: 100%;
-        }
-
-        .logout button {
-            width: 100%;
-            border: none;
-            background: #8f666b;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
+        .ukuran-heading h2 {
             font-size: 14px;
         }
 
-        .logout button:hover {
-            background: #7e595e;
+        .ukuran-heading p {
+            line-height: 1.6;
         }
+    }
+</style>
+@endpush
 
-        /* =========================
-           MAIN
-        ========================= */
+@section('content')
+<div class="ukuran-page">
 
-        .main {
-            flex: 1;
-            padding: 30px 35px;
-            min-width: 0;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .topbar h1 {
-            font-size: 28px;
-            color: #4b3832;
-        }
-
-        .topbar p {
-            margin-top: 7px;
-            color: #806e69;
-        }
-
-        .user-info {
-            background: #fffaf5;
-            padding: 11px 18px;
-            border-radius: 20px;
-            color: #8e6268;
-            border: 1px solid #ead6ca;
-        }
-
-        /* =========================
-           CONTENT
-        ========================= */
-
-        .section {
-            background: #fffaf5;
-            border: 1px solid #ead6ca;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 15px;
-        }
-
-        .section-header h2 {
-            font-size: 20px;
-            color: #4b3832;
-        }
-
-        /* =========================
-           BUTTON TAMBAH
-        ========================= */
-
-        .btn-add {
-            display: inline-block;
-            background: #b8898d;
-            color: white;
-            text-decoration: none;
-            padding: 11px 17px;
-            border-radius: 9px;
-            font-size: 14px;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-add:hover {
-            background: #9f7378;
-        }
-
-        /* =========================
-           TABLE
-        ========================= */
-
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 950px;
-        }
-
-        th {
-            background: #ead6ca;
-            color: #5d4843;
-            padding: 13px;
-            text-align: left;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 13px;
-            border-bottom: 1px solid #eee0d8;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        tr:hover {
-            background: #fcf5f0;
-        }
-
-        /* =========================
-           BUTTON EDIT
-        ========================= */
-
-        .btn-edit {
-            display: inline-block;
-            background: #ead6ca;
-            color: #79555a;
-            text-decoration: none;
-            padding: 7px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            transition: 0.2s;
-        }
-
-        .btn-edit:hover {
-            background: #dfc5b8;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 30px;
-            color: #927477;
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 800px) {
-
-            .layout {
-                display: block;
-            }
-
-            .sidebar {
-                width: 100%;
-                min-height: auto;
-            }
-
-            .main {
-                padding: 20px;
-            }
-
-            .topbar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-<div class="layout">
-
-    <!-- =========================
-         SIDEBAR
-    ========================= -->
-
-    <aside class="sidebar">
-
-        <div class="logo-area">
-
-            <div class="logo-circle">
-
-                <img
-                    src="{{ asset('images/logo-jaitin.png') }}"
-                    alt="Logo Jaitin"
-                >
-
-            </div>
-
-            <div class="brand">
-                Jaitin
-            </div>
-
-            <div class="role">
-                Karyawan
-            </div>
-
+    <!-- INFORMASI HALAMAN -->
+    <section class="ukuran-intro">
+        <div class="ukuran-intro-icon">
+            <span class="material-symbols-rounded">straighten</span>
         </div>
 
+        <div>
+            <h2>Data Ukuran Pelanggan</h2>
+            <p>
+                Kelola dan periksa detail ukuran pelanggan sebagai acuan
+                dalam proses pembuatan pakaian agar hasil jahitan sesuai kebutuhan.
+            </p>
+        </div>
+    </section>
 
-        <!-- MENU SIDEBAR -->
+    <!-- DAFTAR UKURAN -->
+    <section class="ukuran-section">
 
-        <ul class="menu">
+        <div class="ukuran-section-header">
+            <div class="ukuran-heading">
+                <div class="ukuran-heading-icon">
+                    <span class="material-symbols-rounded">format_list_bulleted</span>
+                </div>
 
-            <!-- DASHBOARD -->
+                <div>
+                    <h2>Daftar Ukuran Pelanggan</h2>
+                    <p>Data ukuran pelanggan yang telah tersimpan.</p>
+                </div>
+            </div>
 
-            <li>
-
-                <a
-                    href="{{ route('karyawan.dashboard') }}"
-                    class="{{ request()->routeIs('karyawan.dashboard') ? 'active' : '' }}"
-                >
-                    Dashboard
-                </a>
-
-            </li>
-
-
-            <!-- UKURAN PELANGGAN -->
-
-            <li>
-
-                <a
-                    href="{{ route('karyawan.ukuran.index') }}"
-                    class="{{ request()->routeIs('karyawan.ukuran.*') ? 'active' : '' }}"
-                >
-                    Ukuran Pelanggan
-                </a>
-
-            </li>
-
-
-            <!-- RIWAYAT REVISI -->
-
-            <li>
-
-                <a
-                    href="{{ route('karyawan.revisi.index') }}"
-                    class="{{ request()->routeIs('karyawan.revisi.*') ? 'active' : '' }}"
-                >
-                    Riwayat Revisi
-                </a>
-
-            </li>
-
-
-            <!-- STATUS PENGERJAAN -->
-
-            <li>
-
-                <a
-    href="{{ route('karyawan.pengerjaan.index') }}"
-    class="{{ request()->routeIs('karyawan.pengerjaan.*') ? 'active' : '' }}"
->
-    Status Pengerjaan
-</a>
-
-            </li>
-
-        </ul>
-
-
-        <!-- LOGOUT -->
-
-        <div class="logout">
-
-            <form
-                action="{{ route('logout') }}"
-                method="POST"
-            >
-
-                @csrf
-
-                <button type="submit">
-                    Logout
-                </button>
-
-            </form>
-
+            <a href="{{ route('karyawan.ukuran.create') }}"
+               class="btn-tambah-ukuran">
+                <span class="material-symbols-rounded">add</span>
+                Tambah Ukuran
+            </a>
         </div>
 
-    </aside>
+        <div class="ukuran-table-wrapper">
+            <table class="ukuran-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Nama Pelanggan</th>
+                        <th>Panjang Baju</th>
+                        <th>Lebar Bahu</th>
+                        <th>Lingkar Dada</th>
+                        <th>Lingkar Pinggang</th>
+                        <th>Lingkar Lengan</th>
+                        <th>Tanggal</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
 
-
-    <!-- =========================
-         MAIN CONTENT
-    ========================= -->
-
-    <main class="main">
-
-
-        <!-- TOPBAR -->
-
-        <div class="topbar">
-
-            <div>
-
-                <h1>
-                    Ukuran Pelanggan
-                </h1>
-
-                <p>
-                    Kelola data ukuran pelanggan untuk kebutuhan pengerjaan jahit.
-                </p>
-
-            </div>
-
-
-            <div class="user-info">
-
-                {{ Auth::user()->nama ?? 'Karyawan' }}
-
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             DATA UKURAN
-        ========================= -->
-
-        <div class="section">
-
-            <div class="section-header">
-
-                <h2>
-                    Data Ukuran Pelanggan
-                </h2>
-
-
-                <a
-                    href="{{ route('karyawan.ukuran.create') }}"
-                    class="btn-add"
-                >
-                    + Tambah Ukuran
-                </a>
-
-            </div>
-
-
-            <div class="table-wrapper">
-
-                <table>
-
-                    <thead>
-
+                <tbody>
+                    @forelse($ukuran as $item)
                         <tr>
+                            <td class="ukuran-number">
+                                {{ $loop->iteration }}
+                            </td>
 
-                            <th>
-                                No
-                            </th>
+                            <td class="ukuran-customer">
+                                {{ $item->user->nama ?? '-' }}
+                            </td>
 
-                            <th>
-                                Nama Pelanggan
-                            </th>
+                            <td class="ukuran-value">
+                                {{ $item->panjang_baju !== null ? number_format($item->panjang_baju, 2) : '-' }}
+                                @if($item->panjang_baju !== null)
+                                    <span class="ukuran-unit">cm</span>
+                                @endif
+                            </td>
 
-                            <th>
-                                Panjang Baju
-                            </th>
+                            <td class="ukuran-value">
+                                {{ $item->lebar_bahu !== null ? number_format($item->lebar_bahu, 2) : '-' }}
+                                @if($item->lebar_bahu !== null)
+                                    <span class="ukuran-unit">cm</span>
+                                @endif
+                            </td>
 
-                            <th>
-                                Lebar Bahu
-                            </th>
+                            <td class="ukuran-value">
+                                {{ $item->lingkar_dada !== null ? number_format($item->lingkar_dada, 2) : '-' }}
+                                @if($item->lingkar_dada !== null)
+                                    <span class="ukuran-unit">cm</span>
+                                @endif
+                            </td>
 
-                            <th>
-                                Lingkar Dada
-                            </th>
+                            <td class="ukuran-value">
+                                {{ $item->lingkar_pinggang !== null ? number_format($item->lingkar_pinggang, 2) : '-' }}
+                                @if($item->lingkar_pinggang !== null)
+                                    <span class="ukuran-unit">cm</span>
+                                @endif
+                            </td>
 
-                            <th>
-                                Lingkar Pinggang
-                            </th>
+                            <td class="ukuran-value">
+                                {{ $item->lingkar_lengan !== null ? number_format($item->lingkar_lengan, 2) : '-' }}
+                                @if($item->lingkar_lengan !== null)
+                                    <span class="ukuran-unit">cm</span>
+                                @endif
+                            </td>
 
-                            <th>
-                                Lingkar Lengan
-                            </th>
+                            <td class="ukuran-date">
+                                {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-' }}
+                            </td>
 
-                            <th>
-                                Tanggal
-                            </th>
-
-                            <th>
-                                Aksi
-                            </th>
-
+                            <td>
+                                <a href="{{ route('karyawan.ukuran.edit', $item->id_ukuran) }}"
+                                   class="btn-edit-ukuran">
+                                    <span class="material-symbols-rounded">edit</span>
+                                    Edit
+                                </a>
+                            </td>
                         </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        @forelse($ukuran as $item)
-
-                            <tr>
-
-                                <td>
-                                    {{ $loop->iteration }}
-                                </td>
-
-
-                                <td>
-                                    {{ $item->user->nama ?? '-' }}
-                                </td>
-
-
-                                <td>
-                                    {{ $item->panjang_baju !== null ? number_format($item->panjang_baju, 2) : '-' }}
-                                    cm
-                                </td>
-
-
-                                <td>
-                                    {{ $item->lebar_bahu !== null ? number_format($item->lebar_bahu, 2) : '-' }}
-                                    cm
-                                </td>
-
-
-                                <td>
-                                    {{ $item->lingkar_dada !== null ? number_format($item->lingkar_dada, 2) : '-' }}
-                                    cm
-                                </td>
-
-
-                                <td>
-                                    {{ $item->lingkar_pinggang !== null ? number_format($item->lingkar_pinggang, 2) : '-' }}
-                                    cm
-                                </td>
-
-
-                                <td>
-                                    {{ $item->lingkar_lengan !== null ? number_format($item->lingkar_lengan, 2) : '-' }}
-                                    cm
-                                </td>
-
-
-                                <td>
-                                    {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-' }}
-                                </td>
-
-
-                                <td>
-
-                                    <a
-                                        href="{{ route('karyawan.ukuran.edit', $item->id_ukuran) }}"
-                                        class="btn-edit"
-                                    >
-                                        Edit
-                                    </a>
-
-                                </td>
-
-                            </tr>
-
-                        @empty
-
-                            <tr>
-
-                                <td
-                                    colspan="9"
-                                    class="empty"
-                                >
-                                    Belum ada data ukuran pelanggan.
-                                </td>
-
-                            </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
+                    @empty
+                        <tr>
+                            <td colspan="9" class="ukuran-empty">
+                                <div class="ukuran-empty-content">
+                                    <span class="material-symbols-rounded">straighten</span>
+                                    <strong>Belum ada data ukuran</strong>
+                                    <span>Data ukuran pelanggan akan ditampilkan di sini.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
-    </main>
+        <div class="ukuran-table-footer">
+            <span>
+                Total data: <strong>{{ $ukuran->count() }}</strong> ukuran pelanggan
+            </span>
 
+            <span class="ukuran-table-hint">
+                <span class="material-symbols-rounded">swipe</span>
+                Geser tabel ke samping untuk melihat kolom lainnya.
+            </span>
+        </div>
+
+    </section>
 </div>
-
-</body>
-
-</html>
+@endsection

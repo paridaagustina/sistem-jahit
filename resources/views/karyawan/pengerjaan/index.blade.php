@@ -1,678 +1,416 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.karyawan')
 
-<head>
+@section('title', 'Status Pengerjaan - JAITIN')
+@section('page-title', 'Status Pengerjaan')
+@section('page-description', 'Kelola proses pengerjaan dan estimasi penyelesaian pesanan pelanggan.')
 
-    <meta charset="UTF-8">
+@push('styles')
+<style>
+    .pengerjaan-page {
+        color: #493b3b;
+    }
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    .pengerjaan-page .content-card {
+        background: #fff;
+        border: 1px solid #eee1dc;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 8px 24px rgba(99, 65, 65, .05);
+    }
 
-    <title>Status Pengerjaan - Jaitin</title>
+    .pengerjaan-page .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
 
-    <style>
+    .pengerjaan-page .section-heading h2 {
+        font-size: 19px;
+        font-weight: 700;
+        color: #493b3b;
+        margin: 0;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+    .pengerjaan-page .section-heading p {
+        color: #8c7b7b;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .pengerjaan-page .alert-success {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        background: #edf7ef;
+        color: #34734a;
+        border: 1px solid #d2ead8;
+        font-size: 14px;
+    }
+
+    .pengerjaan-page .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #eee1dc;
+        border-radius: 12px;
+    }
+
+    .pengerjaan-page table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+    .pengerjaan-page thead th {
+        background: #f8eeeb;
+        color: #76585b;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 15px 14px;
+        text-align: left;
+        white-space: nowrap;
+        border-bottom: 1px solid #eee1dc;
+    }
+
+    .pengerjaan-page tbody td {
+        padding: 15px 14px;
+        border-bottom: 1px solid #f1e8e4;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .pengerjaan-page tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .pengerjaan-page tbody tr:hover {
+        background: #fdf9f7;
+    }
+
+    .pengerjaan-page .number-cell {
+        color: #9b8585;
+        width: 45px;
+    }
+
+    .pengerjaan-page .customer-name {
+        font-weight: 600;
+        color: #493b3b;
+    }
+
+    .pengerjaan-page .muted {
+        color: #8c7b7b;
+    }
+
+    .pengerjaan-page .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+        background: #f5e5e5;
+        color: #80575d;
+    }
+
+    .pengerjaan-page .status-badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .pengerjaan-page .status-menunggu {
+        background: #fff3d9;
+        color: #956b1e;
+    }
+
+    .pengerjaan-page .status-proses {
+        background: #e9f0ff;
+        color: #4569ae;
+    }
+
+    .pengerjaan-page .status-selesai {
+        background: #e8f6eb;
+        color: #34734a;
+    }
+
+    .pengerjaan-page .status-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 440px;
+    }
+
+    .pengerjaan-page .form-control {
+        min-height: 38px;
+        padding: 9px 10px;
+        border: 1px solid #e6d7d2;
+        border-radius: 9px;
+        background: #fff;
+        color: #493b3b;
+        font-family: inherit;
+        font-size: 12px;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .pengerjaan-page .form-control:focus {
+        border-color: #b8898d;
+        box-shadow: 0 0 0 3px rgba(184, 137, 141, .13);
+    }
+
+    .pengerjaan-page select.form-control {
+        width: 180px;
+    }
+
+    .pengerjaan-page input[type="date"].form-control {
+        width: 145px;
+    }
+
+    .pengerjaan-page .btn-save {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        min-height: 38px;
+        padding: 9px 13px;
+        border: none;
+        border-radius: 9px;
+        background: #b8898d;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s, transform .2s;
+        white-space: nowrap;
+    }
+
+    .pengerjaan-page .btn-save:hover {
+        background: #9f7378;
+        transform: translateY(-1px);
+    }
+
+    .pengerjaan-page .empty-state {
+        padding: 55px 20px;
+        text-align: center;
+        color: #8c7b7b;
+    }
+
+    .pengerjaan-page .empty-state .material-symbols-rounded {
+        display: block;
+        font-size: 42px;
+        color: #c7a6a7;
+        margin-bottom: 12px;
+    }
+
+    .pengerjaan-page .empty-state strong {
+        display: block;
+        color: #654f50;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .pengerjaan-page .empty-state p {
+        font-size: 13px;
+    }
+
+    .pengerjaan-page .table-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-top: 17px;
+        color: #8c7b7b;
+        font-size: 12px;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .pengerjaan-page .content-card {
+            padding: 17px;
+            border-radius: 14px;
         }
 
-        body {
-            background: #f8f1eb;
-            color: #4b3832;
+        .pengerjaan-page .section-heading h2 {
+            font-size: 17px;
         }
 
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* =========================
-           SIDEBAR
-        ========================= */
-
-        .sidebar {
-            width: 250px;
-            background: #b8898d;
-            color: white;
-            padding: 25px 18px;
-            min-height: 100vh;
-            display: flex;
+        .pengerjaan-page .table-footer {
+            align-items: flex-start;
             flex-direction: column;
-            flex-shrink: 0;
         }
+    }
+</style>
+@endpush
 
-        .logo-area {
-            text-align: center;
-            margin-bottom: 35px;
-        }
+@section('content')
+<div class="pengerjaan-page">
 
-        .logo-circle {
-            width: 75px;
-            height: 75px;
-            margin: auto;
-            border-radius: 50%;
-            background: #fffaf5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+    <div class="content-card">
 
-        .logo-circle img {
-            width: 65px;
-            height: 65px;
-            object-fit: contain;
-        }
-
-        .brand {
-            margin-top: 10px;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .role {
-            margin-top: 5px;
-            font-size: 13px;
-            opacity: 0.85;
-        }
-
-        /* =========================
-           MENU
-        ========================= */
-
-        .menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .menu li {
-            margin-bottom: 8px;
-        }
-
-        .menu li a {
-            display: block;
-            padding: 13px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: 0.2s;
-        }
-
-        .menu li a:hover {
-            background: #9f7378;
-        }
-
-        .menu li a.active {
-            background: #9f7378;
-        }
-
-        /* =========================
-           LOGOUT
-        ========================= */
-
-        .logout {
-            margin-top: auto;
-            padding-top: 30px;
-        }
-
-        .logout button {
-            width: 100%;
-            border: none;
-            background: #8f666b;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .logout button:hover {
-            background: #7e595e;
-        }
-
-        /* =========================
-           MAIN
-        ========================= */
-
-        .main {
-            flex: 1;
-            padding: 30px 35px;
-            min-width: 0;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .topbar h1 {
-            font-size: 28px;
-            color: #4b3832;
-        }
-
-        .topbar p {
-            margin-top: 7px;
-            color: #806e69;
-        }
-
-        .user-info {
-            background: #fffaf5;
-            padding: 11px 18px;
-            border-radius: 20px;
-            color: #8e6268;
-            border: 1px solid #ead6ca;
-        }
-
-        /* =========================
-           SECTION
-        ========================= */
-
-        .section {
-            background: #fffaf5;
-            border: 1px solid #ead6ca;
-            border-radius: 15px;
-            padding: 25px;
-        }
-
-        .section h2 {
-            font-size: 20px;
-            margin-bottom: 20px;
-        }
-
-        /* =========================
-           ALERT
-        ========================= */
-
-        .alert {
-            background: #ead6ca;
-            border: 1px solid #d9bdb0;
-            color: #79555a;
-            padding: 13px 16px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        /* =========================
-           TABLE
-        ========================= */
-
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1100px;
-        }
-
-        th {
-            background: #ead6ca;
-            color: #5d4843;
-            padding: 13px;
-            text-align: left;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 13px;
-            border-bottom: 1px solid #eee0d8;
-            font-size: 14px;
-            vertical-align: middle;
-        }
-
-        tr:hover {
-            background: #fcf5f0;
-        }
-
-        /* =========================
-           FORM
-        ========================= */
-
-        .status-form {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 430px;
-        }
-
-        .status-form select,
-        .status-form input {
-            border: 1px solid #ddc7bb;
-            background: #fffaf5;
-            color: #4b3832;
-            border-radius: 8px;
-            padding: 9px 10px;
-            font-size: 13px;
-        }
-
-        .status-form select {
-            min-width: 180px;
-        }
-
-        .status-form input {
-            width: 145px;
-        }
-
-        .btn-save {
-            border: none;
-            background: #b8898d;
-            color: white;
-            padding: 9px 13px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .btn-save:hover {
-            background: #9f7378;
-        }
-
-        /* =========================
-           STATUS
-        ========================= */
-
-        .status-badge {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 15px;
-            background: #ead6ca;
-            color: #79555a;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 30px;
-            color: #927477;
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 800px) {
-
-            .layout {
-                display: block;
-            }
-
-            .sidebar {
-                width: 100%;
-                min-height: auto;
-            }
-
-            .main {
-                padding: 20px;
-            }
-
-            .topbar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-<div class="layout">
-
-
-    <!-- =========================
-         SIDEBAR
-    ========================= -->
-
-    <aside class="sidebar">
-
-        <div class="logo-area">
-
-            <div class="logo-circle">
-
-                <img
-                    src="{{ asset('images/logo-jaitin.png') }}"
-                    alt="Logo Jaitin"
-                >
-
-            </div>
-
-            <div class="brand">
-                Jaitin
-            </div>
-
-            <div class="role">
-                Karyawan
-            </div>
-
-        </div>
-
-
-        <ul class="menu">
-
-            <li>
-                <a href="{{ route('karyawan.dashboard') }}">
-                    Dashboard
-                </a>
-            </li>
-
-
-            <li>
-                <a href="{{ route('karyawan.ukuran.index') }}">
-                    Ukuran Pelanggan
-                </a>
-            </li>
-
-
-            <li>
-                <a href="{{ route('karyawan.revisi.index') }}">
-                    Riwayat Revisi
-                </a>
-            </li>
-
-
-            <li>
-                <a
-                    href="{{ route('karyawan.pengerjaan.index') }}"
-                    class="{{ request()->routeIs('karyawan.pengerjaan.*') ? 'active' : '' }}"
-                >
-                    Status Pengerjaan
-                </a>
-            </li>
-
-        </ul>
-
-
-        <div class="logout">
-
-            <form
-                action="{{ route('logout') }}"
-                method="POST"
-            >
-
-                @csrf
-
-                <button type="submit">
-                    Logout
-                </button>
-
-            </form>
-
-        </div>
-
-    </aside>
-
-
-    <!-- =========================
-         MAIN
-    ========================= -->
-
-    <main class="main">
-
-
-        <!-- TOPBAR -->
-
-        <div class="topbar">
-
+        <div class="section-heading">
             <div>
-
-                <h1>
-                    Status Pengerjaan
-                </h1>
-
-                <p>
-                    Kelola proses pengerjaan dan estimasi penyelesaian pesanan pelanggan.
-                </p>
-
+                <h2>Data Pengerjaan Pesanan</h2>
+                <p>Pantau status produksi dan perbarui estimasi penyelesaian jahitan.</p>
             </div>
-
-
-            <div class="user-info">
-                {{ Auth::user()->nama ?? 'Karyawan' }}
-            </div>
-
         </div>
 
+        @if(session('success'))
+            <div class="alert-success">
+                <span class="material-symbols-rounded">check_circle</span>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
 
-        <!-- =========================
-             SECTION
-        ========================= -->
-
-        <div class="section">
-
-            <h2>
-                Data Pengerjaan Pesanan
-            </h2>
-
-
-            @if(session('success'))
-
-                <div class="alert">
-                    {{ session('success') }}
+        @if($errors->any())
+            <div class="alert-success" style="background:#fff0f0;color:#a33d48;border-color:#f0cccc;">
+                <span class="material-symbols-rounded">error</span>
+                <div>
+                    <strong>Data belum berhasil disimpan.</strong>
+                    <ul style="margin:6px 0 0 18px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
+            </div>
+        @endif
 
-            @endif
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Pelanggan</th>
+                        <th>Jenis Pakaian</th>
+                        <th>Jumlah</th>
+                        <th>Status Saat Ini</th>
+                        <th>Estimasi Selesai</th>
+                        <th>Perbarui Pengerjaan</th>
+                    </tr>
+                </thead>
 
+                <tbody>
+                    @forelse($pesanan as $item)
+                        @php
+                            $status = $item->status_pengerjaan ?? 'Menunggu Produksi';
 
-            <div class="table-wrapper">
-
-                <table>
-
-                    <thead>
+                            $statusClass = match ($status) {
+                                'Menunggu Produksi' => 'status-menunggu',
+                                'Sedang Dipotong',
+                                'Sedang Menjahit',
+                                'Finishing',
+                                'Quality Check' => 'status-proses',
+                                'Siap Diambil',
+                                'Sudah Diambil' => 'status-selesai',
+                                default => '',
+                            };
+                        @endphp
 
                         <tr>
+                            <td class="number-cell">{{ $loop->iteration }}</td>
 
-                            <th>
-                                No
-                            </th>
-
-                            <th>
-                                Pelanggan
-                            </th>
-
-                            <th>
-                                Jenis Pakaian
-                            </th>
-
-                            <th>
-                                Jumlah
-                            </th>
-
-                            <th>
-                                Status Saat Ini
-                            </th>
-
-                            <th>
-                                Estimasi Selesai
-                            </th>
-
-                            <th>
-                                Perbarui Pengerjaan
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        @forelse($pesanan as $item)
-
-                            <tr>
-
-                                <td>
-                                    {{ $loop->iteration }}
-                                </td>
-
-
-                                <td>
+                            <td>
+                                <span class="customer-name">
                                     {{ $item->user->nama ?? '-' }}
-                                </td>
+                                </span>
+                            </td>
 
+                            <td>{{ $item->jenis_pakaian ?? '-' }}</td>
 
-                                <td>
-                                    {{ $item->jenis_pakaian ?? '-' }}
-                                </td>
+                            <td>{{ $item->jumlah ?? 0 }} pcs</td>
 
+                            <td>
+                                <span class="status-badge {{ $statusClass }}">
+                                    {{ $status }}
+                                </span>
+                            </td>
 
-                                <td>
-                                    {{ $item->jumlah ?? 0 }}
-                                </td>
+                            <td>
+                                @if($item->estimasi_selesai)
+                                    {{ \Carbon\Carbon::parse($item->estimasi_selesai)->format('d/m/Y') }}
+                                @else
+                                    <span class="muted">Belum ditentukan</span>
+                                @endif
+                            </td>
 
+                            <td>
+                                <form
+                                    action="{{ route('karyawan.pengerjaan.update', $item->id_pesanan) }}"
+                                    method="POST"
+                                    class="status-form"
+                                >
+                                    @csrf
+                                    @method('PUT')
 
-                                <td>
+                                    <select
+                                        name="status_pengerjaan"
+                                        class="form-control"
+                                        required
+                                        aria-label="Status pengerjaan"
+                                    >
+                                        @foreach([
+                                            'Menunggu Produksi',
+                                            'Sedang Dipotong',
+                                            'Sedang Menjahit',
+                                            'Finishing',
+                                            'Quality Check',
+                                            'Siap Diambil',
+                                            'Sudah Diambil'
+                                        ] as $pilihanStatus)
+                                            <option
+                                                value="{{ $pilihanStatus }}"
+                                                {{ $status === $pilihanStatus ? 'selected' : '' }}
+                                            >
+                                                {{ $pilihanStatus }}
+                                            </option>
+                                        @endforeach
+                                    </select>
 
-                                    <span class="status-badge">
-
-                                        {{ $item->status_pengerjaan ?? 'Menunggu Produksi' }}
-
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-
-                                    {{ $item->estimasi_selesai
-                                        ? \Carbon\Carbon::parse($item->estimasi_selesai)->format('d/m/Y')
-                                        : '-'
-                                    }}
-
-                                </td>
-
-
-                                <td>
-
-                                    <form
-                                        action="{{ route('karyawan.pengerjaan.update', $item->id_pesanan) }}"
-                                        method="POST"
-                                        class="status-form"
+                                    <input
+                                        type="date"
+                                        name="estimasi_selesai"
+                                        class="form-control"
+                                        value="{{ $item->estimasi_selesai ? \Carbon\Carbon::parse($item->estimasi_selesai)->format('Y-m-d') : '' }}"
+                                        aria-label="Estimasi selesai"
                                     >
 
-                                        @csrf
-
-                                        @method('PUT')
-
-
-                                        <select
-                                            name="status_pengerjaan"
-                                            required
-                                        >
-
-                                            <option
-                                                value="Menunggu Produksi"
-                                                {{ ($item->status_pengerjaan ?? '') === 'Menunggu Produksi' ? 'selected' : '' }}
-                                            >
-                                                Menunggu Produksi
-                                            </option>
-
-                                            <option
-                                                value="Sedang Dipotong"
-                                                {{ $item->status_pengerjaan === 'Sedang Dipotong' ? 'selected' : '' }}
-                                            >
-                                                Sedang Dipotong
-                                            </option>
-
-                                            <option
-                                                value="Sedang Menjahit"
-                                                {{ $item->status_pengerjaan === 'Sedang Menjahit' ? 'selected' : '' }}
-                                            >
-                                                Sedang Menjahit
-                                            </option>
-
-                                            <option
-                                                value="Finishing"
-                                                {{ $item->status_pengerjaan === 'Finishing' ? 'selected' : '' }}
-                                            >
-                                                Finishing
-                                            </option>
-
-                                            <option
-                                                value="Quality Check"
-                                                {{ $item->status_pengerjaan === 'Quality Check' ? 'selected' : '' }}
-                                            >
-                                                Quality Check
-                                            </option>
-
-                                            <option
-                                                value="Siap Diambil"
-                                                {{ $item->status_pengerjaan === 'Siap Diambil' ? 'selected' : '' }}
-                                            >
-                                                Siap Diambil
-                                            </option>
-
-                                            <option
-                                                value="Sudah Diambil"
-                                                {{ $item->status_pengerjaan === 'Sudah Diambil' ? 'selected' : '' }}
-                                            >
-                                                Sudah Diambil
-                                            </option>
-
-                                        </select>
-
-
-                                        <input
-                                            type="date"
-                                            name="estimasi_selesai"
-                                            value="{{ $item->estimasi_selesai }}"
-                                        >
-
-
-                                        <button
-                                            type="submit"
-                                            class="btn-save"
-                                        >
-                                            Simpan
-                                        </button>
-
-                                    </form>
-
-                                </td>
-
-                            </tr>
-
-                        @empty
-
-                            <tr>
-
-                                <td
-                                    colspan="7"
-                                    class="empty"
-                                >
-                                    Belum ada pesanan yang dapat dikelola.
-                                </td>
-
-                            </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
+                                    <button type="submit" class="btn-save">
+                                        <span class="material-symbols-rounded" style="font-size:16px;">save</span>
+                                        Simpan
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <span class="material-symbols-rounded">content_cut</span>
+                                    <strong>Belum ada pesanan</strong>
+                                    <p>Pesanan yang perlu dikelola akan ditampilkan di sini.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
-    </main>
+        <div class="table-footer">
+            <span>Menampilkan {{ $pesanan->count() }} data pengerjaan</span>
+            <span>JAITIN · Manajemen Produksi</span>
+        </div>
 
+    </div>
 </div>
-
-</body>
-
-</html>
+@endsection

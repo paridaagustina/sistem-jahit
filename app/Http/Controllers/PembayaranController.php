@@ -94,6 +94,23 @@ class PembayaranController extends Controller
         );
     }
 
+    // =========================
+// RIWAYAT PEMBAYARAN PELANGGAN
+// =========================
+public function indexPelanggan()
+{
+    $pembayaran = Pembayaran::with('pesanan')
+        ->whereHas('pesanan', function ($query) {
+            $query->where('id_user', auth()->id());
+        })
+        ->orderBy('tanggal_pembayaran', 'desc')
+        ->get();
+
+    return view(
+        'pelanggan.pembayaran.index',
+        compact('pembayaran')
+    );
+}
 
     // =========================
     // UPDATE PEMBAYARAN

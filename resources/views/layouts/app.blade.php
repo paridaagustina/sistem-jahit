@@ -1,4 +1,4 @@
-```php
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>@yield('title', 'Jaitin')</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <style>
         * {
@@ -68,27 +70,116 @@
             font-weight: bold;
         }
 
-        .menu {
-            list-style: none;
-        }
+        
+/* =========================
+   SIDEBAR MENU
+========================= */
 
-        .menu li {
-            margin-bottom: 8px;
-        }
+.menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
-        .menu a {
-            display: block;
-            padding: 13px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: 0.2s;
-        }
+.menu li {
+    margin: 0;
+}
 
-        .menu a:hover,
-        .menu a.active {
-            background: #9f7378;
-        }
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 15px;
+    color: #fffaf5;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.25s ease,
+                color 0.25s ease,
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+    position: relative;
+}
+
+.menu a i {
+    width: 21px;
+    min-width: 21px;
+    text-align: center;
+    font-size: 17px;
+}
+
+/* Efek saat kursor diarahkan ke menu */
+.menu a:hover {
+    background: rgba(255, 250, 245, 0.17);
+    color: #ffffff;
+    transform: translateX(4px);
+}
+
+/* Menu yang sedang aktif */
+.menu a.active {
+    background: #fffaf5;
+    color: #98676d;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(75, 56, 50, 0.10);
+}
+
+/* Ikon menu aktif */
+.menu a.active i {
+    color: #98676d;
+}
+
+/* Efek ketika menu aktif disentuh */
+.menu a.active:hover {
+    background: #fff3ec;
+    transform: translateX(3px);
+}
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
+
+.logout {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 250, 245, 0.3);
+}
+
+.logout button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    border: 1px solid rgba(255, 250, 245, 0.25);
+    background: #8f666b;
+    color: #fff;
+    padding: 13px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.logout button:hover {
+    background: #7e595e;
+    box-shadow: 0 5px 14px rgba(75, 56, 50, 0.15);
+    transform: translateY(-2px);
+}
+
+.logout button i {
+    font-size: 16px;
+}
+
+/* Fokus keyboard */
+.menu a:focus-visible,
+.logout button:focus-visible {
+    outline: 3px solid #fff3c4;
+    outline-offset: 3px;
+}
+
 
         /* =========================
            LOGOUT
@@ -223,65 +314,76 @@
 
         </div>
 
-        <ul class="menu">
+        
+<ul class="menu">
 
-            <li>
-                <a href="{{ route('dashboard') }}"
-                   class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    Dashboard
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('dashboard') }}"
+           class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
 
-            <li>
-                <a href="{{ route('pelanggan.pesanan.create') }}"
-                   class="{{ request()->routeIs('pelanggan.pesanan.*') ? 'active' : '' }}">
-                    Pesan Jasa Jahit
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('pelanggan.pesanan.create') }}"
+           class="{{ request()->routeIs('pelanggan.pesanan.*') ? 'active' : '' }}">
+            <i class="fa-solid fa-scissors"></i>
+            <span>Pesan Jasa Jahit</span>
+        </a>
+    </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Pesanan Saya
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('dashboard') }}">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <span>Pesanan Saya</span>
+        </a>
+    </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Ukuran Saya
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('dashboard') }}">
+            <i class="fa-solid fa-ruler-combined"></i>
+            <span>Ukuran Saya</span>
+        </a>
+    </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Referensi Model
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('dashboard') }}">
+            <i class="fa-solid fa-shirt"></i>
+            <span>Referensi Model</span>
+        </a>
+    </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Pembayaran
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('dashboard') }}">
+            <i class="fa-solid fa-credit-card"></i>
+            <span>Pembayaran</span>
+        </a>
+    </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Riwayat Revisi
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('dashboard') }}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Riwayat Revisi</span>
+        </a>
+    </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Notifikasi
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('dashboard') }}">
+            <i class="fa-solid fa-bell"></i>
+            <span>Notifikasi</span>
+        </a>
+    </li>
 
-            <li>
-                <a href="{{ route('dashboard') }}">
-                    Pengambilan
-                </a>
-            </li>
+    <li>
+        <a href="{{ route('dashboard') }}">
+            <i class="fa-solid fa-box-open"></i>
+            <span>Pengambilan</span>
+        </a>
+    </li>
 
-        </ul>
+</ul>
+
 
         <div class="logout">
 
@@ -335,4 +437,3 @@
 
 </body>
 </html>
-```

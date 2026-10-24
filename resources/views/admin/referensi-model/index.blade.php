@@ -1,525 +1,989 @@
+@extends('layouts.admin')
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Referensi Model - Jaitin</title>
+@section('title', 'Referensi Model - JAITIN')
+@section('page-title', 'Referensi Model')
+@section('page-description', 'Kelola katalog model dan layanan jahit JAITIN.')
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@section('styles')
+<style>
+    /* ===== REFERENSI MODEL JAITIN ===== */
+    .reference-page {
+        --ref-primary: #ad7b82;
+        --ref-primary-dark: #91646b;
+        --ref-primary-light: #f5e7e8;
+        --ref-cream: #fffaf7;
+        --ref-border: #ecddd6;
+        --ref-text: #493936;
+        --ref-muted: #927e78;
+        --ref-shadow: 0 8px 26px rgba(103, 75, 66, .055);
 
-        body {
-            background: #f8f1eb;
-            color: #4b3832;
-        }
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+        min-width: 0;
+        color: var(--ref-text);
+    }
 
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
+    .reference-page *,
+    .reference-page *::before,
+    .reference-page *::after {
+        box-sizing: border-box;
+    }
 
-        .sidebar {
-            width: 250px;
-            flex-shrink: 0;
-            background: #b8898d;
-            color: white;
-            padding: 25px 18px;
-        }
+    .reference-page h2,
+    .reference-page h3,
+    .reference-page p {
+        margin-top: 0;
+    }
 
-        .logo-area {
-            text-align: center;
-            margin-bottom: 35px;
-        }
+    /* ===== PAGE INTRO ===== */
+    .reference-intro {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 22px;
+        padding: 28px 30px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,.4);
+        border-radius: 22px;
+        background: linear-gradient(120deg, #95666f 0%, #b78389 56%, #d5a69a 100%);
+        color: #fffaf6;
+        box-shadow: 0 12px 30px rgba(145, 100, 107, .13);
+    }
 
-        .logo-circle {
-            width: 75px;
-            height: 75px;
-            margin: auto;
-            border-radius: 50%;
-            background: #fffaf5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+    .reference-intro::before,
+    .reference-intro::after {
+        position: absolute;
+        content: "";
+        pointer-events: none;
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 50%;
+    }
 
-        .logo-circle img {
-            width: 65px;
-            height: 65px;
-            object-fit: contain;
-        }
+    .reference-intro::before {
+        width: 230px;
+        height: 230px;
+        top: -135px;
+        right: 90px;
+        box-shadow:
+            0 0 0 22px rgba(255,255,255,.035),
+            0 0 0 48px rgba(255,255,255,.025);
+    }
 
-        .brand {
-            margin-top: 10px;
-            font-size: 22px;
-            font-weight: bold;
-        }
+    .reference-intro::after {
+        width: 170px;
+        height: 170px;
+        right: -60px;
+        bottom: -115px;
+        background: rgba(255,255,255,.07);
+    }
 
-        .menu {
-            list-style: none;
-        }
+    .reference-intro-content {
+        position: relative;
+        z-index: 1;
+        max-width: 700px;
+    }
 
-        .menu li {
-            margin-bottom: 8px;
-        }
+    .reference-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 13px;
+        padding: 7px 11px;
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 30px;
+        background: rgba(255,255,255,.12);
+        color: #fffaf6;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.1px;
+    }
 
-        .menu a {
-            display: block;
-            padding: 13px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: 0.2s;
-        }
+    .reference-intro h2 {
+        margin-bottom: 9px;
+        color: #fffaf6;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(23px, 2.5vw, 31px);
+        line-height: 1.35;
+        font-weight: 700;
+    }
 
-        .menu a:hover,
-        .menu a.active {
-            background: #9f7378;
-        }
+    .reference-intro p {
+        max-width: 610px;
+        margin-bottom: 0;
+        color: rgba(255,250,246,.9);
+        font-size: 13px;
+        line-height: 1.85;
+    }
 
-        .logout {
-            margin-top: 30px;
-        }
+    .reference-intro-icon {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 88px;
+        height: 88px;
+        flex-shrink: 0;
+        margin-right: 12px;
+        border: 1px solid rgba(255,255,255,.3);
+        border-radius: 25px;
+        background: rgba(255,255,255,.13);
+        color: #fffaf6;
+        font-size: 37px;
+        transform: rotate(-5deg);
+    }
 
-        .logout button {
-            width: 100%;
-            border: none;
-            background: #8f666b;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-        }
+    /* ===== SHARED CARD ===== */
+    .reference-card {
+        min-width: 0;
+        padding: 26px;
+        border: 1px solid var(--ref-border);
+        border-radius: 20px;
+        background: #fffdfb;
+        box-shadow: var(--ref-shadow);
+    }
 
-        .logout button:hover {
-            background: #79545a;
-        }
+    .reference-card-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        margin-bottom: 24px;
+    }
 
-        .main {
-            flex: 1;
-            min-width: 0;
-            padding: 30px 35px;
-        }
+    .reference-card-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        border: 1px solid #eedcdd;
+        border-radius: 14px;
+        background: var(--ref-primary-light);
+        color: var(--ref-primary-dark);
+        font-size: 18px;
+    }
 
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
+    .reference-card-header h2 {
+        margin-bottom: 5px;
+        color: var(--ref-text);
+        font-size: 17px;
+        font-weight: 750;
+        line-height: 1.45;
+    }
 
-        .topbar h1 {
-            font-size: 28px;
-        }
+    .reference-card-header p {
+        margin-bottom: 0;
+        color: var(--ref-muted);
+        font-size: 12px;
+        line-height: 1.7;
+    }
 
-        .topbar p {
-            margin-top: 8px;
-            color: #806e69;
-        }
+    .reference-divider {
+        height: 1px;
+        margin: 0 0 24px;
+        background: #f0e6e0;
+    }
 
-        .admin-info {
-            background: #fffaf5;
-            border: 1px solid #ead6ca;
-            padding: 10px 18px;
-            border-radius: 20px;
-            color: #8e6268;
-            white-space: nowrap;
-        }
+    /* ===== FLASH MESSAGES ===== */
+    .form-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        border: 1px solid;
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.7;
+    }
 
-        .intro,
-        .upload-card {
-            background: #fffaf5;
-            border: 1px solid #ead6ca;
-            border-radius: 15px;
-            padding: 24px;
-            margin-bottom: 25px;
-        }
+    .form-message > i {
+        margin-top: 3px;
+        flex-shrink: 0;
+    }
 
-        .intro h2,
-        .upload-card h2 {
-            font-size: 20px;
-            margin-bottom: 12px;
-        }
+    .form-success {
+        border-color: #c9e7d1;
+        background: #f0faf2;
+        color: #286640;
+    }
 
-        .intro p {
-            color: #806e69;
-            line-height: 1.7;
-        }
+    .form-error-box {
+        border-color: #f0caca;
+        background: #fff4f3;
+        color: #a53030;
+    }
 
-        .upload-grid {
-            display: grid;
+    .form-error-box ul {
+        margin: 7px 0 0;
+        padding-left: 19px;
+    }
+
+    /* ===== FORM ===== */
+    .upload-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 21px 20px;
+    }
+
+    .upload-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .upload-group-full {
+        grid-column: 1 / -1;
+    }
+
+    .upload-group label {
+        color: #604b46;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .required-mark {
+        color: #c46e78;
+    }
+
+    .upload-group input:not([type="file"]),
+    .upload-group select,
+    .upload-group textarea {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        padding: 12px 14px;
+        border: 1px solid #e8d9d2;
+        border-radius: 11px;
+        outline: none;
+        background: #fff;
+        color: var(--ref-text);
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.5;
+        transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+
+    .upload-group input::placeholder,
+    .upload-group textarea::placeholder {
+        color: #b3a29b;
+    }
+
+    .upload-group input:not([type="file"]):hover,
+    .upload-group select:hover,
+    .upload-group textarea:hover {
+        border-color: #d6b9b6;
+    }
+
+    .upload-group input:not([type="file"]):focus,
+    .upload-group select:focus,
+    .upload-group textarea:focus {
+        border-color: var(--ref-primary);
+        background: #fffdfd;
+        box-shadow: 0 0 0 4px rgba(173,123,130,.12);
+    }
+
+    .upload-group textarea {
+        min-height: 115px;
+        resize: vertical;
+    }
+
+    .upload-group small {
+        color: var(--ref-muted);
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    /* ===== FILE UPLOAD ===== */
+    .file-upload-box {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 150px;
+        padding: 18px;
+        overflow: hidden;
+        border: 1px dashed #d8b9b8;
+        border-radius: 13px;
+        background: #fff9f7;
+        text-align: center;
+        transition: border-color .2s, background .2s;
+    }
+
+    .file-upload-box:hover,
+    .file-upload-box.is-dragging {
+        border-color: var(--ref-primary);
+        background: #fff0f0;
+    }
+
+    .file-upload-box > i {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: #f4e3e5;
+        color: var(--ref-primary-dark);
+        font-size: 19px;
+    }
+
+    .file-upload-title {
+        color: #604b46;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .file-upload-caption {
+        color: var(--ref-muted);
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .file-upload-box input[type="file"] {
+        width: 100%;
+        max-width: 100%;
+        color: var(--ref-muted);
+        font-family: inherit;
+        font-size: 11px;
+    }
+
+    .file-preview {
+        display: none;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .file-preview.is-visible {
+        display: block;
+    }
+
+    .file-preview img {
+        display: block;
+        width: 100%;
+        max-height: 230px;
+        border: 1px solid var(--ref-border);
+        border-radius: 12px;
+        background: #fff;
+        object-fit: contain;
+    }
+
+    .file-preview-name {
+        display: block;
+        margin-top: 8px;
+        overflow-wrap: anywhere;
+        color: var(--ref-muted);
+        font-size: 11px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .reference-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 22px;
+        border-top: 1px solid #f0e6e0;
+    }
+
+    .upload-button,
+    .category-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 43px;
+        padding: 12px 18px;
+        border: 1px solid transparent;
+        border-radius: 11px;
+        background: linear-gradient(135deg, #b8898d, #a7737a);
+        color: #fff;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform .2s, box-shadow .2s, background .2s;
+    }
+
+    .upload-button:hover,
+    .category-button:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #a8757c, #91636b);
+        color: #fff;
+        box-shadow: 0 7px 17px rgba(145,100,107,.2);
+    }
+
+    .upload-button:focus-visible,
+    .category-button:focus-visible {
+        outline: 3px solid rgba(173,123,130,.3);
+        outline-offset: 3px;
+    }
+
+    /* ===== CATEGORY SECTION ===== */
+    .category-section-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 17px;
+    }
+
+    .category-section-heading h2 {
+        margin-bottom: 5px;
+        color: var(--ref-text);
+        font-size: 18px;
+        font-weight: 750;
+    }
+
+    .category-section-heading p {
+        margin-bottom: 0;
+        color: var(--ref-muted);
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .category-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        padding: 23px;
+        overflow: hidden;
+        border: 1px solid var(--ref-border);
+        border-radius: 19px;
+        background: #fffdfb;
+        box-shadow: 0 5px 18px rgba(103,75,66,.035);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+    .category-card::after {
+        position: absolute;
+        right: -34px;
+        bottom: -45px;
+        width: 115px;
+        height: 115px;
+        border-radius: 50%;
+        background: var(--category-soft);
+        content: "";
+        opacity: .65;
+        pointer-events: none;
+    }
+
+    .category-card:hover {
+        transform: translateY(-4px);
+        border-color: #d9b9b6;
+        box-shadow: 0 13px 28px rgba(103,75,66,.09);
+    }
+
+    .category-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .category-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        flex-shrink: 0;
+        border-radius: 16px;
+        background: var(--category-soft);
+        color: var(--category-color);
+        font-size: 22px;
+    }
+
+    .category-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 31px;
+        height: 27px;
+        padding: 0 8px;
+        border: 1px solid var(--category-soft);
+        border-radius: 8px;
+        background: var(--category-soft);
+        color: var(--category-color);
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .category-card h3 {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 9px;
+        color: var(--ref-text);
+        font-size: 16px;
+        font-weight: 750;
+    }
+
+    .category-card p {
+        position: relative;
+        z-index: 1;
+        flex: 1;
+        margin-bottom: 22px;
+        color: var(--ref-muted);
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .category-card .category-button {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+    }
+
+    .category-kebaya {
+        --category-color: #a56d79;
+        --category-soft: #f5e5e8;
+    }
+
+    .category-dress {
+        --category-color: #ad8050;
+        --category-soft: #f7ecdd;
+    }
+
+    .category-perbaikan {
+        --category-color: #7e72a5;
+        --category-soft: #eee9f7;
+    }
+
+    /* ===== BOTTOM NOTE ===== */
+    .reference-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin: 0;
+        padding: 17px 19px;
+        border: 1px solid #eaded3;
+        border-radius: 14px;
+        background: #fbf4ee;
+        color: #806e69;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .reference-note i {
+        margin-top: 3px;
+        color: var(--ref-primary-dark);
+        font-size: 16px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1100px) {
+        .category-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .reference-page {
+            gap: 20px;
         }
 
-        .upload-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .reference-intro {
+            padding: 23px;
+            border-radius: 18px;
         }
 
-        .upload-group label {
-            font-size: 14px;
-            font-weight: bold;
+        .reference-intro-icon {
+            width: 70px;
+            height: 70px;
+            margin-right: 0;
+            border-radius: 20px;
+            font-size: 29px;
         }
 
-        .upload-group input,
-        .upload-group select,
-        .upload-group textarea {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #e3cfc5;
-            border-radius: 8px;
-            background: white;
-            color: #4b3832;
-        }
-
-        .upload-group textarea {
-            min-height: 90px;
-            resize: vertical;
-        }
-
-        .upload-button,
-        .category-button {
-            display: inline-block;
-            border: none;
-            border-radius: 9px;
-            background: #b8898d;
-            color: white;
-            padding: 12px 18px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .upload-button {
-            margin-top: 18px;
-        }
-
-        .upload-button:hover,
-        .category-button:hover {
-            background: #9f7378;
-        }
-
-        .form-message {
-            margin-bottom: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            background: #f1dfe0;
-            color: #704b50;
-            line-height: 1.7;
-        }
-
-        .form-error {
-            color: #b42318;
-            font-size: 13px;
-            margin-left: 20px;
+        .reference-card {
+            padding: 21px;
+            border-radius: 17px;
         }
 
         .category-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 22px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px;
         }
 
         .category-card {
-            background: #fffaf5;
-            border: 1px solid #ead6ca;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(120, 90, 80, 0.06);
-            display: flex;
+            padding: 18px;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .reference-intro {
+            padding: 21px 19px;
+        }
+
+        .reference-intro-icon {
+            display: none;
+        }
+
+        .reference-intro h2 {
+            font-size: 24px;
+        }
+
+        .reference-intro p {
+            font-size: 12px;
+        }
+
+        .reference-card {
+            padding: 17px;
+        }
+
+        .reference-card-header {
+            gap: 10px;
+            margin-bottom: 19px;
+        }
+
+        .reference-card-icon {
+            width: 41px;
+            height: 41px;
+            border-radius: 12px;
+        }
+
+        .upload-grid,
+        .category-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .upload-group-full {
+            grid-column: auto;
+        }
+
+        .reference-actions {
             flex-direction: column;
-            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .category-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 18px rgba(120, 90, 80, 0.1);
+        .upload-button {
+            width: 100%;
         }
 
-        .category-icon {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #f1dfe0;
-            border-radius: 15px;
-            font-size: 30px;
-            margin-bottom: 20px;
+        .category-card {
+            padding: 20px;
         }
 
-        .category-card h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
+        .category-section-heading h2 {
+            font-size: 16px;
         }
 
-        .category-card p {
-            color: #806e69;
-            font-size: 14px;
-            line-height: 1.7;
-            flex: 1;
-            margin-bottom: 22px;
+        .reference-note {
+            padding: 15px;
         }
+    }
 
-        .note {
-            margin-top: 25px;
-            color: #806e69;
-            font-size: 13px;
-            line-height: 1.7;
+    @media (prefers-reduced-motion: reduce) {
+        .category-card,
+        .upload-button,
+        .category-button,
+        .upload-group input,
+        .upload-group select,
+        .upload-group textarea {
+            transition: none;
         }
+    }
+</style>
+@endsection
 
-        @media (max-width: 1100px) {
-            .category-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
+@section('content')
+<div class="reference-page">
 
-        @media (max-width: 768px) {
-            .layout {
-                display: block;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
-
-            .main {
-                padding: 20px;
-            }
-
-            .topbar {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .category-grid,
-            .upload-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-
-<body>
-<div class="layout">
-
-    <aside class="sidebar">
-        <div class="logo-area">
-            <div class="logo-circle">
-                <img
-                    src="{{ asset('images/logo-jaitin.png') }}"
-                    alt="Logo Jaitin"
-                    onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;color:#b8898d;font-size:25px;font-weight:bold&quot;>J</span>';"
-                >
-            </div>
-            <div class="brand">Jaitin</div>
-        </div>
-
-        <ul class="menu">
-            <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-            <li><a href="{{ route('admin.pelanggan.index') }}">Data Pelanggan</a></li>
-            <li><a href="{{ route('admin.pesanan.index') }}">Data Pesanan</a></li>
-            <li><a href="{{ route('admin.ukuran.index') }}">Data Ukuran</a></li>
-            <li>
-                <a href="{{ route('admin.referensi-model.index') }}" class="active">
-                    Referensi Model
-                </a>
-            </li>
-            <li><a href="{{ route('admin.pembayaran.index') }}">Pembayaran</a></li>
-        </ul>
-
-        <div class="logout">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit">Logout</button>
-            </form>
-        </div>
-    </aside>
-
-    <main class="main">
-
-        <div class="topbar">
-            <div>
-                <h1>Referensi Model</h1>
-                <p>Kelola katalog model dan layanan jahit Jaitin.</p>
+    {{-- HEADER --}}
+    <section class="reference-intro">
+        <div class="reference-intro-content">
+            <div class="reference-eyebrow">
+                <i class="fa-solid fa-sparkles"></i>
+                JAITIN ADMINISTRATION
             </div>
 
-            <div class="admin-info">
-                {{ Auth::user()->nama ?? 'Admin' }}
-            </div>
-        </div>
+            <h2>Katalog Referensi Model</h2>
 
-        <section class="intro">
-            <h2>Katalog Jaitin</h2>
             <p>
-                Tambahkan foto referensi, pilih kategori dan jenis model.
-                Setiap jenis model dapat memiliki banyak foto referensi.
+                Kelola inspirasi model pakaian dan layanan jahit dalam satu tempat.
+                Tambahkan foto referensi agar pelanggan lebih mudah menentukan
+                model yang sesuai dengan keinginannya.
             </p>
-        </section>
+        </div>
 
-        <section class="upload-card">
-            <h2>Tambah Referensi Model</h2>
+        <div class="reference-intro-icon" aria-hidden="true">
+            <i class="fa-solid fa-shirt"></i>
+        </div>
+    </section>
 
-            @if (session('success'))
-                <div class="form-message">
-                    {{ session('success') }}
-                </div>
-            @endif
+    {{-- FORM TAMBAH REFERENSI --}}
+    <section class="reference-card">
+        <div class="reference-card-header">
+            <div class="reference-card-icon">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
 
-            @if ($errors->any())
-                <div class="form-message">
-                    <strong>Data belum berhasil disimpan:</strong>
+            <div>
+                <h2>Tambah Referensi Model</h2>
+                <p>Lengkapi informasi model dan unggah foto sebagai inspirasi jahitan.</p>
+            </div>
+        </div>
+
+        <div class="reference-divider"></div>
+
+        @if (session('success'))
+            <div class="form-message form-success" role="status">
+                <i class="fa-solid fa-circle-check"></i>
+                <div>{{ session('success') }}</div>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="form-message form-error-box" role="alert">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <div>{{ session('error') }}</div>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="form-message form-error-box" role="alert">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                    <strong>Referensi belum berhasil disimpan.</strong>
                     <ul>
                         @foreach ($errors->all() as $error)
-                            <li class="form-error">{{ $error }}</li>
+                            <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
-            @endif
+            </div>
+        @endif
 
-            <form
-                action="{{ route('admin.referensi-model.store') }}"
-                method="POST"
-                enctype="multipart/form-data"
-            >
-                @csrf
+        <form
+            action="{{ route('admin.referensi-model.store') }}"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+            @csrf
 
-                <div class="upload-grid">
+            <div class="upload-grid">
+                <div class="upload-group">
+                    <label for="nama_model">
+                        Nama Referensi <span class="required-mark">*</span>
+                    </label>
 
-                    <div class="upload-group">
-                        <label for="nama_model">Nama Referensi Foto</label>
-                        <input
-                            type="text"
-                            id="nama_model"
-                            name="nama_model"
-                            value="{{ old('nama_model') }}"
-                            placeholder="Contoh: Kebaya Modern Model 1"
-                            required
-                        >
-                    </div>
+                    <input
+                        type="text"
+                        id="nama_model"
+                        name="nama_model"
+                        value="{{ old('nama_model') }}"
+                        placeholder="Contoh: Kebaya Modern Model 1"
+                        maxlength="255"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
 
-                    <div class="upload-group">
-                        <label for="kategori">Kategori Utama</label>
-                        <select id="kategori" name="kategori" required>
-                            <option value="">Pilih kategori</option>
-                            <option value="kebaya"
-                                {{ old('kategori') === 'kebaya' ? 'selected' : '' }}>
-                                Kebaya
-                            </option>
-                            <option value="dress"
-                                {{ old('kategori') === 'dress' ? 'selected' : '' }}>
-                                Dress
-                            </option>
-                            <option value="perbaikan"
-                                {{ old('kategori') === 'perbaikan' ? 'selected' : '' }}>
-                                Perbaikan Pakaian
-                            </option>
-                        </select>
-                    </div>
+                <div class="upload-group">
+                    <label for="kategori">
+                        Kategori Utama <span class="required-mark">*</span>
+                    </label>
 
-                    <div class="upload-group">
-                        <label for="jenis_model">Jenis Model</label>
-                        <select id="jenis_model" name="jenis_model" required>
-                            <option value="">Pilih jenis model</option>
-                        </select>
-                    </div>
+                    <select id="kategori" name="kategori" required>
+                        <option value="">Pilih kategori</option>
+                        <option value="kebaya" @selected(old('kategori') === 'kebaya')>
+                            Kebaya
+                        </option>
+                        <option value="dress" @selected(old('kategori') === 'dress')>
+                            Dress
+                        </option>
+                        <option value="perbaikan" @selected(old('kategori') === 'perbaikan')>
+                            Perbaikan Pakaian
+                        </option>
+                    </select>
+                </div>
 
-                    <div class="upload-group">
-                        <label for="foto">Foto Referensi</label>
+                <div class="upload-group">
+                    <label for="jenis_model">
+                        Jenis Model <span class="required-mark">*</span>
+                    </label>
+
+                    <select id="jenis_model" name="jenis_model" required>
+                        <option value="">Pilih kategori terlebih dahulu</option>
+                    </select>
+
+                    <small>Pilihan jenis model menyesuaikan kategori utama.</small>
+                </div>
+
+                <div class="upload-group">
+                    <label for="foto">
+                        Foto Referensi <span class="required-mark">*</span>
+                    </label>
+
+                    <div class="file-upload-box" id="fileUploadBox">
+                        <i class="fa-regular fa-image"></i>
+
+                        <div class="file-upload-title">Pilih foto referensi</div>
+
+                        <div class="file-upload-caption">
+                            JPG, JPEG, PNG, atau WEBP. Maksimal 2 MB.
+                        </div>
+
                         <input
                             type="file"
                             id="foto"
                             name="foto"
-                            accept=".jpg,.jpeg,.png,.webp"
+                            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                             required
                         >
-                        <small>JPG, PNG, atau WEBP. Maksimal 2 MB.</small>
-                    </div>
 
-                    <div class="upload-group">
-                        <label for="deskripsi">Deskripsi</label>
-                        <textarea
-                            id="deskripsi"
-                            name="deskripsi"
-                            placeholder="Tuliskan deskripsi model..."
-                        >{{ old('deskripsi') }}</textarea>
+                        <div class="file-preview" id="filePreview">
+                            <img src="" alt="Pratinjau foto referensi" id="previewImage">
+                            <span class="file-preview-name" id="filePreviewName"></span>
+                        </div>
                     </div>
-
                 </div>
 
-                <input type="hidden" name="aktif" value="1">
+                <div class="upload-group upload-group-full">
+                    <label for="deskripsi">Deskripsi Model</label>
 
+                    <textarea
+                        id="deskripsi"
+                        name="deskripsi"
+                        maxlength="1000"
+                        placeholder="Jelaskan detail model, potongan pakaian, bahan, atau inspirasi desain..."
+                    >{{ old('deskripsi') }}</textarea>
+
+                    <small>Opsional. Maksimal 1.000 karakter.</small>
+                </div>
+            </div>
+
+            <input type="hidden" name="aktif" value="1">
+
+            <div class="reference-actions">
                 <button type="submit" class="upload-button">
-                    + Simpan Referensi Model
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Simpan Referensi Model
                 </button>
-            </form>
-        </section>
+            </div>
+        </form>
+    </section>
 
-        <section class="category-grid">
+    {{-- KATEGORI REFERENSI --}}
+    <section>
+        <div class="category-section-heading">
+            <div>
+                <h2>Kategori Referensi</h2>
+                <p>Pilih kategori untuk mengelola koleksi foto model.</p>
+            </div>
+        </div>
 
-            <article class="category-card">
-                <div class="category-icon">🪡</div>
+        <div class="category-grid">
+            <article class="category-card category-kebaya">
+                <div class="category-card-top">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-spool"></i>
+                    </div>
+                    <span class="category-number">01</span>
+                </div>
+
                 <h3>Kebaya</h3>
+
                 <p>
-                    Jelajahi Kebaya Klasik, Kebaya Modern, Kebaya Minimalis,
-                    dan kumpulan foto referensi di dalam setiap jenis.
+                    Kelola koleksi kebaya klasik, kebaya modern, dan kebaya
+                    minimalis sebagai inspirasi model jahitan pelanggan.
                 </p>
-                <a class="category-button"
-                   href="{{ route('admin.referensi-model.kategori', ['kategori' => 'kebaya']) }}">
+
+                <a
+                    class="category-button"
+                    href="{{ route('admin.referensi-model.kategori', ['kategori' => 'kebaya']) }}"
+                >
+                    <i class="fa-solid fa-images"></i>
                     Kelola Kebaya
+                    <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </article>
 
-            <article class="category-card">
-                <div class="category-icon">👗</div>
+            <article class="category-card category-dress">
+                <div class="category-card-top">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-person-dress"></i>
+                    </div>
+                    <span class="category-number">02</span>
+                </div>
+
                 <h3>Dress</h3>
+
                 <p>
-                    Jelajahi referensi dress pesta, formal, dan casual
-                    beserta foto modelnya.
+                    Kelola referensi dress pesta, formal, dan kasual beserta
+                    koleksi model yang dapat dijadikan inspirasi.
                 </p>
-                <a class="category-button"
-                   href="{{ route('admin.referensi-model.kategori', ['kategori' => 'dress']) }}">
+
+                <a
+                    class="category-button"
+                    href="{{ route('admin.referensi-model.kategori', ['kategori' => 'dress']) }}"
+                >
+                    <i class="fa-solid fa-images"></i>
                     Kelola Dress
+                    <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </article>
 
-            <article class="category-card">
-                <div class="category-icon">🧵</div>
+            <article class="category-card category-perbaikan">
+                <div class="category-card-top">
+                    <div class="category-icon">
+                        <i class="fa-solid fa-scissors"></i>
+                    </div>
+                    <span class="category-number">03</span>
+                </div>
+
                 <h3>Perbaikan Pakaian</h3>
+
                 <p>
-                    Jelajahi layanan mengecilkan pakaian, memendekkan pakaian,
-                    dan mengganti resleting.
+                    Kelola referensi layanan mengecilkan atau memendekkan
+                    pakaian serta mengganti resleting.
                 </p>
-                <a class="category-button"
-                   href="{{ route('admin.referensi-model.kategori', ['kategori' => 'perbaikan']) }}">
+
+                <a
+                    class="category-button"
+                    href="{{ route('admin.referensi-model.kategori', ['kategori' => 'perbaikan']) }}"
+                >
+                    <i class="fa-solid fa-images"></i>
                     Kelola Layanan
+                    <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </article>
+        </div>
+    </section>
 
-        </section>
+    {{-- INFORMASI TAMBAHAN --}}
+    <div class="reference-note">
+        <i class="fa-solid fa-lightbulb"></i>
 
-        <p class="note">
-            Kamu dapat mengunggah banyak foto dengan kategori dan jenis model
-            yang sama. Foto-foto tersebut akan dikelompokkan dalam galeri jenis
-            model yang sesuai.
-        </p>
+        <div>
+            <strong>Tips pengelolaan katalog</strong><br>
+            Kamu dapat menambahkan beberapa foto dengan kategori dan jenis model
+            yang sama. Setiap foto disimpan sebagai data referensi tersendiri
+            sesuai dukungan controller dan database.
+        </div>
+    </div>
 
-    </main>
 </div>
+@endsection
 
+@section('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
     const jenisPerKategori = {
         kebaya: [
             { value: 'Kebaya Klasik', label: 'Kebaya Klasik' },
@@ -540,14 +1004,13 @@
 
     const kategoriSelect = document.getElementById('kategori');
     const jenisSelect = document.getElementById('jenis_model');
-
     const jenisLama = @json(old('jenis_model'));
 
     function perbaruiJenisModel() {
         const kategori = kategoriSelect.value;
         const daftarJenis = jenisPerKategori[kategori] || [];
 
-        jenisSelect.innerHTML = '';
+        jenisSelect.replaceChildren();
 
         const pilihanAwal = document.createElement('option');
         pilihanAwal.value = '';
@@ -561,19 +1024,79 @@
             const option = document.createElement('option');
             option.value = jenis.value;
             option.textContent = jenis.label;
-
-            if (jenis.value === jenisLama) {
-                option.selected = true;
-            }
-
+            option.selected = jenis.value === jenisLama;
             jenisSelect.appendChild(option);
         });
     }
 
-    kategoriSelect.addEventListener('change', perbaruiJenisModel);
+    kategoriSelect.addEventListener('change', function () {
+        perbaruiJenisModel();
+    });
 
     perbaruiJenisModel();
-</script>
 
-</body>
-</html>
+    /* Pratinjau foto sebelum dikirim ke server */
+    const fotoInput = document.getElementById('foto');
+    const previewBox = document.getElementById('filePreview');
+    const previewImage = document.getElementById('previewImage');
+    const previewName = document.getElementById('filePreviewName');
+    const uploadBox = document.getElementById('fileUploadBox');
+
+    let previewUrl = null;
+
+    fotoInput.addEventListener('change', function () {
+        const file = this.files && this.files[0];
+
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            previewUrl = null;
+        }
+
+        if (!file) {
+            previewBox.classList.remove('is-visible');
+            previewImage.removeAttribute('src');
+            previewName.textContent = '';
+            return;
+        }
+
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        const maxSize = 2 * 1024 * 1024;
+
+        if (!allowedTypes.includes(file.type)) {
+            alert('Format foto harus JPG, JPEG, PNG, atau WEBP.');
+            this.value = '';
+            previewBox.classList.remove('is-visible');
+            return;
+        }
+
+        if (file.size > maxSize) {
+            alert('Ukuran foto maksimal 2 MB.');
+            this.value = '';
+            previewBox.classList.remove('is-visible');
+            return;
+        }
+
+        previewUrl = URL.createObjectURL(file);
+        previewImage.src = previewUrl;
+        previewName.textContent = file.name;
+        previewBox.classList.add('is-visible');
+    });
+
+    /* Efek visual saat file diseret ke area unggah.
+       Pengunggahan tetap melalui input file standar. */
+    ['dragenter', 'dragover'].forEach(function (eventName) {
+        uploadBox.addEventListener(eventName, function (event) {
+            event.preventDefault();
+            uploadBox.classList.add('is-dragging');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(function (eventName) {
+        uploadBox.addEventListener(eventName, function (event) {
+            event.preventDefault();
+            uploadBox.classList.remove('is-dragging');
+        });
+    });
+});
+</script>
+@endsection

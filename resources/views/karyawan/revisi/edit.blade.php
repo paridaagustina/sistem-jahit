@@ -1,631 +1,553 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.karyawan')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@section('title', 'Edit Revisi - JAITIN')
+@section('page-title', 'Edit Revisi')
+@section('page-description', 'Perbarui data revisi pesanan pelanggan.')
 
-    <title>Edit Revisi - Jaitin</title>
+@push('styles')
+<style>
+    .revisi-edit {
+        max-width: 1000px;
+        margin: 0 auto;
+        color: var(--text, #493b3b);
+    }
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+    .revisi-edit *,
+    .revisi-edit *::before,
+    .revisi-edit *::after {
+        box-sizing: border-box;
+    }
+
+    .revisi-edit .form-card {
+        overflow: hidden;
+        background: var(--white, #fff);
+        border: 1px solid var(--border, #eee1dc);
+        border-radius: 18px;
+        box-shadow: var(--shadow, 0 8px 24px rgba(99,65,65,.06));
+    }
+
+    .revisi-edit .card-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 24px 28px;
+        background: linear-gradient(135deg, #fffaf7, #f9eeee);
+        border-bottom: 1px solid var(--border, #eee1dc);
+    }
+
+    .revisi-edit .header-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #f2dfe1;
+        color: var(--pink-deep, #80575d);
+    }
+
+    .revisi-edit .header-icon .material-symbols-rounded {
+        font-size: 27px;
+    }
+
+    .revisi-edit .card-heading {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 750;
+        color: var(--text, #493b3b);
+    }
+
+    .revisi-edit .card-subheading {
+        margin: 5px 0 0;
+        color: var(--muted, #8c7b7b);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .revisi-edit .form-body {
+        padding: 28px;
+    }
+
+    .revisi-edit .section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 18px;
+        color: var(--pink-deep, #80575d);
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .revisi-edit .section-title .material-symbols-rounded {
+        font-size: 20px;
+    }
+
+    .revisi-edit .order-info {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+        padding: 20px;
+        background: #fff8f6;
+        border: 1px solid #efdfda;
+        border-radius: 14px;
+    }
+
+    .revisi-edit .info-item {
+        min-width: 0;
+    }
+
+    .revisi-edit .info-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+        color: var(--muted, #8c7b7b);
+        font-size: 12px;
+    }
+
+    .revisi-edit .info-label .material-symbols-rounded {
+        font-size: 17px;
+        color: var(--pink-dark, #9f7378);
+    }
+
+    .revisi-edit .info-value {
+        overflow-wrap: anywhere;
+        color: var(--text, #493b3b);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .revisi-edit .order-number {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 8px;
+        background: #f2dfe1;
+        color: var(--pink-deep, #80575d);
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .revisi-edit .form-group {
+        min-width: 0;
+        margin-bottom: 22px;
+    }
+
+    .revisi-edit .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .revisi-edit .form-label {
+        display: block;
+        margin-bottom: 9px;
+        color: var(--text, #493b3b);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .revisi-edit .required {
+        color: #c05e69;
+    }
+
+    .revisi-edit .input-wrap {
+        position: relative;
+    }
+
+    .revisi-edit .input-icon {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        transform: translateY(-50%);
+        color: #a48b8c;
+        font-size: 20px;
+        pointer-events: none;
+    }
+
+    .revisi-edit .form-control {
+        display: block;
+        width: 100%;
+        min-height: 46px;
+        padding: 12px 14px;
+        border: 1px solid #e7d8d4;
+        border-radius: 11px;
+        outline: none;
+        background: #fff;
+        color: var(--text, #493b3b);
+        font-family: inherit;
+        font-size: 13px;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .revisi-edit .input-wrap .form-control {
+        padding-left: 44px;
+    }
+
+    .revisi-edit textarea.form-control {
+        min-height: 130px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+    .revisi-edit .form-control:focus {
+        border-color: var(--pink, #b8898d);
+        box-shadow: 0 0 0 3px rgba(184, 137, 141, .14);
+    }
+
+    .revisi-edit .form-control::placeholder {
+        color: #b4a5a2;
+    }
+
+    .revisi-edit .field-hint {
+        margin: 7px 0 0;
+        color: var(--muted, #8c7b7b);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .revisi-edit .error-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 5px;
+        margin-top: 7px;
+        color: #b5414c;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .revisi-edit .error-message .material-symbols-rounded {
+        font-size: 16px;
+    }
+
+    .revisi-edit .form-divider {
+        height: 1px;
+        margin: 4px 0 24px;
+        border: 0;
+        background: var(--border, #eee1dc);
+    }
+
+    .revisi-edit .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding-top: 8px;
+    }
+
+    .revisi-edit .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 11px 19px;
+        border: 1px solid transparent;
+        border-radius: 11px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background .2s, transform .2s, box-shadow .2s;
+    }
+
+    .revisi-edit .btn .material-symbols-rounded {
+        font-size: 19px;
+    }
+
+    .revisi-edit .btn-primary {
+        background: var(--pink, #b8898d);
+        color: #fff;
+        box-shadow: 0 5px 12px rgba(184, 137, 141, .2);
+    }
+
+    .revisi-edit .btn-primary:hover {
+        background: var(--pink-dark, #9f7378);
+        transform: translateY(-1px);
+        box-shadow: 0 7px 16px rgba(184, 137, 141, .25);
+    }
+
+    .revisi-edit .btn-secondary {
+        background: #fff;
+        border-color: var(--border, #eee1dc);
+        color: #765e5e;
+    }
+
+    .revisi-edit .btn-secondary:hover {
+        background: #fbf4f1;
+    }
+
+    @media (max-width: 760px) {
+        .revisi-edit .order-info {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 640px) {
+        .revisi-edit .card-header {
+            padding: 20px;
         }
 
-        body {
-            background: #f8f1eb;
-            color: #4b3832;
+        .revisi-edit .form-body {
+            padding: 20px;
         }
 
-        .layout {
-            display: flex;
-            min-height: 100vh;
+        .revisi-edit .order-info,
+        .revisi-edit .form-grid {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 14px;
         }
 
-        /* SIDEBAR */
-        .sidebar {
-            width: 250px;
-            background: #b8898d;
-            color: white;
-            padding: 25px 18px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
+        .revisi-edit .form-actions {
+            flex-direction: column-reverse;
         }
 
-        .logo-area {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .logo-circle {
-            width: 75px;
-            height: 75px;
-            margin: auto;
-            border-radius: 50%;
-            background: #fffaf5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .logo-circle img {
-            width: 65px;
-            height: 65px;
-            object-fit: contain;
-        }
-
-        .brand {
-            margin-top: 10px;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .role {
-            margin-top: 5px;
-            font-size: 13px;
-            opacity: 0.85;
-        }
-
-        .menu {
-            list-style: none;
-        }
-
-        .menu li {
-            margin-bottom: 8px;
-        }
-
-        .menu a {
-            display: block;
-            padding: 13px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-        }
-
-        .menu a:hover,
-        .menu a.active {
-            background: #9f7378;
-        }
-
-        /* LOGOUT */
-        .logout {
-            margin-top: auto;
-            padding-top: 30px;
-        }
-
-        .logout button {
+        .revisi-edit .btn {
             width: 100%;
-            border: none;
-            background: #8f666b;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
         }
+    }
+</style>
+@endpush
 
-        .logout button:hover {
-            background: #7e595e;
-        }
+@section('content')
+<div class="revisi-edit">
+    <div class="form-card">
 
-        /* MAIN */
-        .main {
-            flex: 1;
-            padding: 30px 35px;
-            min-width: 0;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .topbar h1 {
-            font-size: 28px;
-            color: #4b3832;
-        }
-
-        .topbar p {
-            margin-top: 7px;
-            color: #806e69;
-        }
-
-        .user-info {
-            background: #fffaf5;
-            padding: 11px 18px;
-            border-radius: 20px;
-            color: #8e6268;
-            border: 1px solid #ead6ca;
-        }
-
-        /* FORM CARD */
-        .form-card {
-            background: #fffaf5;
-            border: 1px solid #ead6ca;
-            border-radius: 15px;
-            padding: 28px;
-            max-width: 900px;
-        }
-
-        .form-card h2 {
-            font-size: 20px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 11px 13px;
-            border: 1px solid #dbc5bc;
-            border-radius: 9px;
-            background: white;
-            color: #4b3832;
-            font-size: 14px;
-        }
-
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #b8898d;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .error {
-            color: #a94442;
-            font-size: 13px;
-            margin-top: 6px;
-        }
-
-        /* INFO PESANAN */
-        .order-info {
-            background: #f8f1eb;
-            border: 1px solid #ead6ca;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 22px;
-        }
-
-        .order-info p {
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-
-        .order-info p:last-child {
-            margin-bottom: 0;
-        }
-
-        .order-info strong {
-            color: #79555a;
-        }
-
-        /* BUTTON */
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 25px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 11px 20px;
-            border-radius: 9px;
-            border: none;
-            font-size: 14px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: #b8898d;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #9f7378;
-        }
-
-        .btn-secondary {
-            background: #eadbd4;
-            color: #65494b;
-        }
-
-        .btn-secondary:hover {
-            background: #dfc9c0;
-        }
-
-        @media (max-width: 800px) {
-
-            .layout {
-                display: block;
-            }
-
-            .sidebar {
-                width: 100%;
-                min-height: auto;
-            }
-
-            .main {
-                padding: 20px;
-            }
-
-            .topbar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="layout">
-
-    <!-- SIDEBAR -->
-
-    <aside class="sidebar">
-
-        <div class="logo-area">
-
-            <div class="logo-circle">
-
-                <img
-                    src="{{ asset('images/logo-jaitin.png') }}"
-                    alt="Logo Jaitin"
-                >
-
+        <div class="card-header">
+            <div class="header-icon">
+                <span class="material-symbols-rounded">edit_note</span>
             </div>
-
-            <div class="brand">
-                Jaitin
-            </div>
-
-            <div class="role">
-                Karyawan
-            </div>
-
-        </div>
-
-
-        <ul class="menu">
-
-            <li>
-                <a href="{{ route('karyawan.dashboard') }}">
-                    Dashboard
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('karyawan.ukuran.index') }}">
-                    Ukuran Pelanggan
-                </a>
-            </li>
-
-            <li>
-                <a
-                    href="{{ route('karyawan.revisi.index') }}"
-                    class="active"
-                >
-                    Riwayat Revisi
-                </a>
-            </li>
-
-            <li>
-                <a
-    href="{{ route('karyawan.pengerjaan.index') }}"
-    class="{{ request()->routeIs('karyawan.pengerjaan.*') ? 'active' : '' }}"
->
-    Status Pengerjaan
-</a>
-            </li>
-
-        </ul>
-
-
-        <!-- LOGOUT -->
-
-        <div class="logout">
-
-            <form
-                action="{{ route('logout') }}"
-                method="POST"
-            >
-
-                @csrf
-
-                <button type="submit">
-                    Logout
-                </button>
-
-            </form>
-
-        </div>
-
-    </aside>
-
-
-    <!-- MAIN -->
-
-    <main class="main">
-
-        <!-- TOPBAR -->
-
-        <div class="topbar">
 
             <div>
-
-                <h1>
-                    Edit Revisi
-                </h1>
-
-                <p>
-                    Perbarui data revisi pesanan pelanggan.
+                <h2 class="card-heading">Perbarui Data Revisi</h2>
+                <p class="card-subheading">
+                    Periksa informasi pesanan dan sesuaikan detail revisi pelanggan.
                 </p>
-
             </div>
-
-            <div class="user-info">
-                {{ Auth::user()->nama ?? 'Karyawan' }}
-            </div>
-
         </div>
 
+        <div class="form-body">
 
-        <!-- FORM -->
-
-        <div class="form-card">
-
-            <h2>
-                Data Revisi
-            </h2>
-
-
-            <!-- INFORMASI PESANAN -->
+            <h3 class="section-title">
+                <span class="material-symbols-rounded">receipt_long</span>
+                Informasi Pesanan
+            </h3>
 
             <div class="order-info">
+                <div class="info-item">
+                    <div class="info-label">
+                        <span class="material-symbols-rounded">person</span>
+                        Pelanggan
+                    </div>
+                    <div class="info-value">
+                        {{ $revisi->pesanan->user->nama ?? '-' }}
+                    </div>
+                </div>
 
-                <p>
-                    <strong>Pelanggan:</strong>
-                    {{ $revisi->pesanan->user->nama ?? '-' }}
-                </p>
+                <div class="info-item">
+                    <div class="info-label">
+                        <span class="material-symbols-rounded">apparel</span>
+                        Jenis Pakaian
+                    </div>
+                    <div class="info-value">
+                        {{ $revisi->pesanan->jenis_pakaian ?? '-' }}
+                    </div>
+                </div>
 
-                <p>
-                    <strong>Jenis Pakaian:</strong>
-                    {{ $revisi->pesanan->jenis_pakaian ?? '-' }}
-                </p>
-
-                <p>
-                    <strong>Nomor Pesanan:</strong>
-                    #{{ $revisi->id_pesanan }}
-                </p>
-
+                <div class="info-item">
+                    <div class="info-label">
+                        <span class="material-symbols-rounded">tag</span>
+                        Nomor Pesanan
+                    </div>
+                    <div class="info-value">
+                        <span class="order-number">
+                            #{{ $revisi->id_pesanan }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
+            <hr class="form-divider">
+
+            <h3 class="section-title">
+                <span class="material-symbols-rounded">description</span>
+                Detail Revisi
+            </h3>
 
             <form
                 action="{{ route('karyawan.revisi.update', $revisi->id_revisi) }}"
                 method="POST"
             >
-
                 @csrf
                 @method('PUT')
 
-
-                <!-- PESANAN -->
-
                 <div class="form-group">
-
-                    <label for="id_pesanan">
-                        Pesanan
+                    <label class="form-label" for="id_pesanan">
+                        Pesanan <span class="required">*</span>
                     </label>
 
-                    <select
-                        name="id_pesanan"
-                        id="id_pesanan"
-                        required
-                    >
+                    <div class="input-wrap">
+                        <span class="material-symbols-rounded input-icon">receipt_long</span>
 
-                        @foreach($pesanan as $item)
-
-                            <option
-                                value="{{ $item->id_pesanan }}"
-                                {{ old('id_pesanan', $revisi->id_pesanan) == $item->id_pesanan ? 'selected' : '' }}
-                            >
-                                #{{ $item->id_pesanan }}
-                                -
-                                {{ $item->user->nama ?? 'Pelanggan' }}
-                                -
-                                {{ $item->jenis_pakaian ?? 'Pesanan' }}
-                            </option>
-
-                        @endforeach
-
-                    </select>
+                        <select
+                            class="form-control"
+                            name="id_pesanan"
+                            id="id_pesanan"
+                            required
+                        >
+                            @foreach($pesanan as $item)
+                                <option
+                                    value="{{ $item->id_pesanan }}"
+                                    {{ old('id_pesanan', $revisi->id_pesanan) == $item->id_pesanan ? 'selected' : '' }}
+                                >
+                                    #{{ $item->id_pesanan }}
+                                    - {{ $item->user->nama ?? 'Pelanggan' }}
+                                    - {{ $item->jenis_pakaian ?? 'Pesanan' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     @error('id_pesanan')
-
-                        <div class="error">
-                            {{ $message }}
+                        <div class="error-message">
+                            <span class="material-symbols-rounded">error</span>
+                            <span>{{ $message }}</span>
                         </div>
-
                     @enderror
-
                 </div>
 
-
-                <!-- KETERANGAN -->
-
                 <div class="form-group">
-
-                    <label for="keterangan">
-                        Keterangan Revisi
+                    <label class="form-label" for="keterangan">
+                        Keterangan Revisi <span class="required">*</span>
                     </label>
 
                     <textarea
+                        class="form-control"
                         name="keterangan"
                         id="keterangan"
+                        placeholder="Jelaskan bagian pakaian yang perlu diperbaiki..."
                         required
                     >{{ old('keterangan', $revisi->keterangan) }}</textarea>
 
                     @error('keterangan')
+                        <div class="error-message">
+                            <span class="material-symbols-rounded">error</span>
+                            <span>{{ $message }}</span>
+                        </div>
+                    @enderror
+                </div>
 
-                        <div class="error">
-                            {{ $message }}
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="tanggal_revisi">
+                            Tanggal Revisi <span class="required">*</span>
+                        </label>
+
+                        <div class="input-wrap">
+                            <span class="material-symbols-rounded input-icon">calendar_month</span>
+
+                            <input
+                                class="form-control"
+                                type="datetime-local"
+                                name="tanggal_revisi"
+                                id="tanggal_revisi"
+                                value="{{ old('tanggal_revisi', $revisi->tanggal_revisi ? \Carbon\Carbon::parse($revisi->tanggal_revisi)->format('Y-m-d\TH:i') : '') }}"
+                                required
+                            >
                         </div>
 
-                    @enderror
-
-                </div>
-
-
-                <!-- TANGGAL DAN BATAS -->
-
-                <div class="grid">
-
-                    <div class="form-group">
-
-                        <label for="tanggal_revisi">
-                            Tanggal Revisi
-                        </label>
-
-                        <input
-                            type="datetime-local"
-                            name="tanggal_revisi"
-                            id="tanggal_revisi"
-                            value="{{ old('tanggal_revisi', $revisi->tanggal_revisi ? \Carbon\Carbon::parse($revisi->tanggal_revisi)->format('Y-m-d\TH:i') : '') }}"
-                            required
-                        >
-
                         @error('tanggal_revisi')
-
-                            <div class="error">
-                                {{ $message }}
+                            <div class="error-message">
+                                <span class="material-symbols-rounded">error</span>
+                                <span>{{ $message }}</span>
                             </div>
-
                         @enderror
-
                     </div>
 
-
                     <div class="form-group">
-
-                        <label for="batas_waktu_revisi">
-                            Batas Waktu Revisi
+                        <label class="form-label" for="batas_waktu_revisi">
+                            Batas Waktu Revisi <span class="required">*</span>
                         </label>
 
-                        <input
-                            type="date"
-                            name="batas_waktu_revisi"
-                            id="batas_waktu_revisi"
-                            value="{{ old('batas_waktu_revisi', $revisi->batas_waktu_revisi ? \Carbon\Carbon::parse($revisi->batas_waktu_revisi)->format('Y-m-d') : '') }}"
-                            required
-                        >
+                        <div class="input-wrap">
+                            <span class="material-symbols-rounded input-icon">event</span>
+
+                            <input
+                                class="form-control"
+                                type="date"
+                                name="batas_waktu_revisi"
+                                id="batas_waktu_revisi"
+                                value="{{ old('batas_waktu_revisi', $revisi->batas_waktu_revisi ? \Carbon\Carbon::parse($revisi->batas_waktu_revisi)->format('Y-m-d') : '') }}"
+                                required
+                            >
+                        </div>
+
+                        <p class="field-hint">
+                            Tentukan target penyelesaian revisi.
+                        </p>
 
                         @error('batas_waktu_revisi')
-
-                            <div class="error">
-                                {{ $message }}
+                            <div class="error-message">
+                                <span class="material-symbols-rounded">error</span>
+                                <span>{{ $message }}</span>
                             </div>
-
                         @enderror
-
                     </div>
-
                 </div>
 
-
-                <!-- BIAYA REVISI -->
-
                 <div class="form-group">
-
-                    <label for="biaya_revisi">
+                    <label class="form-label" for="biaya_revisi">
                         Biaya Tambahan Revisi (Rp)
                     </label>
 
-                    <input
-                        type="number"
-                        name="biaya_revisi"
-                        id="biaya_revisi"
-                        min="0"
-                        step="0.01"
-                        value="{{ old('biaya_revisi', $revisi->biaya_revisi ?? 0) }}"
-                        placeholder="0"
-                    >
+                    <div class="input-wrap">
+                        <span class="material-symbols-rounded input-icon">payments</span>
+
+                        <input
+                            class="form-control"
+                            type="number"
+                            name="biaya_revisi"
+                            id="biaya_revisi"
+                            min="0"
+                            step="0.01"
+                            value="{{ old('biaya_revisi', $revisi->biaya_revisi ?? 0) }}"
+                            placeholder="0"
+                        >
+                    </div>
+
+                    <p class="field-hint">
+                        Isi 0 jika tidak ada biaya tambahan.
+                    </p>
 
                     @error('biaya_revisi')
-
-                        <div class="error">
-                            {{ $message }}
+                        <div class="error-message">
+                            <span class="material-symbols-rounded">error</span>
+                            <span>{{ $message }}</span>
                         </div>
-
                     @enderror
-
                 </div>
 
+                <hr class="form-divider">
 
-                <!-- BUTTON -->
-
-                <div class="actions">
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                    >
-                        Simpan Perubahan
-                    </button>
-
+                <div class="form-actions">
                     <a
                         href="{{ route('karyawan.revisi.index') }}"
                         class="btn btn-secondary"
                     >
+                        <span class="material-symbols-rounded">arrow_back</span>
                         Batal
                     </a>
 
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-symbols-rounded">save</span>
+                        Simpan Perubahan
+                    </button>
                 </div>
-
             </form>
-
         </div>
-
-    </main>
-
+    </div>
 </div>
-
-</body>
-
-</html>
+@endsection

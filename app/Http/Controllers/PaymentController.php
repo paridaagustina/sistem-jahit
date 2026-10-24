@@ -4,38 +4,80 @@ namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
 use App\Models\Pembayaran;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Throwable;
 
 class PaymentController extends Controller
 {
     public function pay($id)
     {
-        $pesanan = Pesanan::with('user')->findOrFail($id);
+        $user = Auth::user();
 
-        $jumlahBayar = $pesanan->besaran_dp ?? 0;
+        /*
+        |--------------------------------------------------------------------------
+        | 1. Pastikan hanya pemilik pesanan yang dapat membayar
+        |--------------------------------------------------------------------------
+        */
+
+        $pesanan = Pesanan::with('user')
+            ->where('id_pesanan', $id)
+            ->where('id_user', $user->id_user)
+            ->firstOrFail();
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Tentukan jumlah pembayaran
+        |--------------------------------------------------------------------------
+        */
+
+        $totalHarga = (float) ($pesanan->total_harga ?? 0);
+        $jumlahBayar = (float) ($pesanan->besaran_dp ?? 0);
 
         if ($jumlahBayar <= 0) {
-            $jumlahBayar = $pesanan->total_harga;
+            $jumlahBayar = $totalHarga;
         }
 
         if ($jumlahBayar <= 0) {
             return redirect()
-                ->route('admin.pesanan.index')
+                ->route('pelanggan.pesanan.index')
                 ->with('error', 'Jumlah pembayaran belum ditentukan.');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | 3. Konfigurasi Midtrans
+        |--------------------------------------------------------------------------
+        */
+
         Config::$serverKey = config('services.midtrans.server_key');
-        Config::$isProduction = config('services.midtrans.is_production');
+        Config::$isProduction = (bool) config(
+            'services.midtrans.is_production',
+            false
+        );
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
         $orderId = 'JTN-' . $pesanan->id_pesanan . '-' . time();
 
-        $customerName = $pesanan->user->nama ?? 'Pelanggan';
-        $customerEmail = $pesanan->user->email ?? null;
-        $customerPhone = $pesanan->user->no_hp ?? null;
+        // Kolom users yang digunakan adalah name, bukan nama.
+        $customerName = $pesanan->user->name
+            ?? $user->name
+            ?? 'Pelanggan';
+
+        $customerEmail = $pesanan->user->email
+            ?? $user->email
+            ?? null;
+
+        $customerPhone = $pesanan->user->no_hp
+            ?? $user->no_hp
+            ?? null;
+
+        $jenisPembayaran = ($jumlahBayar < $totalHarga)
+            ? 'DP'
+            : 'Pelunasan';
 
         $params = [
             'transaction_details' => [
@@ -54,38 +96,58 @@ class PaymentController extends Controller
                     'id' => 'PESANAN-' . $pesanan->id_pesanan,
                     'price' => (int) $jumlahBayar,
                     'quantity' => 1,
-                    'name' => 'Pembayaran Pesanan Jahit #' . $pesanan->id_pesanan,
+                    'name' => 'Pembayaran Pesanan Jahit #'
+                        . $pesanan->id_pesanan,
                 ],
             ],
         ];
 
+        /*
+        |--------------------------------------------------------------------------
+        | 4. Buat transaksi dan tampilkan halaman pelanggan
+        |--------------------------------------------------------------------------
+        */
+
         try {
             $snapToken = Snap::getSnapToken($params);
 
-            Pembayaran::create([
-                'id_pesanan' => $pesanan->id_pesanan,
-                'transaksi_id' => $orderId,
-                'jumlah' => $jumlahBayar,
-                'jenis_pembayaran' => ($jumlahBayar < $pesanan->total_harga)
-                    ? 'DP'
-                    : 'Pelunasan',
-                'tanggal_pembayaran' => now(),
-                'metode_pembayaran' => 'Midtrans',
-                'status_pembayaran' => 'Pending',
-            ]);
+            DB::transaction(function () use (
+                $pesanan,
+                $orderId,
+                $jumlahBayar,
+                $jenisPembayaran
+            ) {
+                Pembayaran::create([
+                    'id_pesanan' => $pesanan->id_pesanan,
+                    'transaksi_id' => $orderId,
+                    'jumlah' => $jumlahBayar,
+                    'jenis_pembayaran' => $jenisPembayaran,
+                    'tanggal_pembayaran' => now(),
+                    'metode_pembayaran' => 'Midtrans',
+                    'status_pembayaran' => 'Pending',
+                ]);
+            });
 
-            return view('admin.pembayaran.bayar', compact(
-                'pesanan',
-                'snapToken',
-                'jumlahBayar',
-                'orderId'
-            ));
+            return response()
+                ->view('pelanggan.pembayaran.bayar', [
+                    'pesanan' => $pesanan,
+                    'snapToken' => $snapToken,
+                    'jumlahBayar' => $jumlahBayar,
+                    'orderId' => $orderId,
+                    'isProduction' => Config::$isProduction,
+                    'clientKey' => config('services.midtrans.client_key'),
+                ])
+                ->header('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
+            report($e);
 
             return redirect()
-                ->route('admin.pesanan.index')
-                ->with('error', 'Gagal membuat pembayaran: ' . $e->getMessage());
+                ->route('pelanggan.pesanan.index')
+                ->with(
+                    'error',
+                    'Gagal membuat pembayaran. Silakan coba kembali.'
+                );
         }
     }
 }

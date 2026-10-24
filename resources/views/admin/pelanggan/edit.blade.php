@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.admin')
 
-    <title>Edit Pelanggan - Jaitin</title>
+@section('title', 'Data Pelanggan - JAITIN')
+@section('page-title', 'Data Pelanggan')
+@section('page-description', 'Kelola informasi dan data pelanggan JAITIN.')
+
+@section('styles')
+
 
     <style>
         * {
@@ -225,97 +226,13 @@
             }
         }
     </style>
-</head>
+@endsection
 
-<body>
+@section('content')
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-
-        <div class="logo-area">
-
-            <div class="logo-circle">
-                <img src="{{ asset('images/logo-jaitin.png') }}"
-                     alt="Logo Jaitin">
-            </div>
-
-            <div class="brand">
-                Jaitin
-            </div>
-
-        </div>
-
-        <ul class="menu">
-
-            <li>
-                <a href="{{ route('admin.dashboard') }}">
-                    Dashboard
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('admin.pelanggan.index') }}"
-                   class="active">
-                    Data Pelanggan
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('admin.pesanan.index') }}">
-                    Data Pesanan
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Data Ukuran
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Referensi Model
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Pembayaran
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Status Pengerjaan
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    Revisi
-                </a>
-            </li>
-
-        </ul>
-
-        <div class="logout">
-
-            <form action="{{ route('logout') }}" method="POST">
-
-                @csrf
-
-                <button type="submit">
-                    Logout
-                </button>
-
-            </form>
-
-        </div>
-
-    </aside>
-
+    
 
     <!-- MAIN -->
     <main class="main">
@@ -506,5 +423,4 @@
 
 </div>
 
-</body>
-</html>
+@endsection
