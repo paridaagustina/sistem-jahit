@@ -493,16 +493,18 @@
     const overlay = document.getElementById('sidebarOverlay');
     const mobileQuery = window.matchMedia('(max-width: 800px)');
 
-    // Jangan jalankan handler jika elemen navigasi tidak ada di halaman.
+    // Hentikan jika elemen navigasi tidak tersedia.
     if (!sidebar || !toggle || !overlay) return;
 
     function openSidebar() {
         sidebar.classList.add('open');
         overlay.classList.add('show');
         document.body.classList.add('sidebar-open');
+
         toggle.setAttribute('aria-expanded', 'true');
         toggle.setAttribute('aria-label', 'Tutup menu navigasi');
         sidebar.setAttribute('aria-hidden', 'false');
+
         const icon = toggle.querySelector('.material-symbols-rounded');
         if (icon) icon.textContent = 'close';
     }
@@ -511,12 +513,20 @@
         sidebar.classList.remove('open');
         overlay.classList.remove('show');
         document.body.classList.remove('sidebar-open');
+
         toggle.setAttribute('aria-expanded', 'false');
         toggle.setAttribute('aria-label', 'Buka menu navigasi');
-        sidebar.setAttribute('aria-hidden', mobileQuery.matches ? 'true' : 'false');
+        sidebar.setAttribute(
+            'aria-hidden',
+            mobileQuery.matches ? 'true' : 'false'
+        );
+
         const icon = toggle.querySelector('.material-symbols-rounded');
         if (icon) icon.textContent = 'menu';
-        if (restoreFocus && mobileQuery.matches) toggle.focus();
+
+        if (restoreFocus && mobileQuery.matches) {
+            toggle.focus();
+        }
     }
 
     toggle.addEventListener('click', function () {
@@ -532,14 +542,19 @@
     });
 
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && sidebar.classList.contains('open')) {
+        if (
+            event.key === 'Escape' &&
+            sidebar.classList.contains('open')
+        ) {
             closeSidebar(true);
         }
     });
 
     sidebar.querySelectorAll('.menu a').forEach(function (link) {
         link.addEventListener('click', function () {
-            if (mobileQuery.matches) closeSidebar(false);
+            if (mobileQuery.matches) {
+                closeSidebar(false);
+            }
         });
     });
 
@@ -557,13 +572,15 @@
     if (typeof mobileQuery.addEventListener === 'function') {
         mobileQuery.addEventListener('change', handleViewportChange);
     } else {
-        // Fallback untuk browser lama.
+        // Dukungan untuk browser lama.
         mobileQuery.addListener(handleViewportChange);
     }
+
     handleViewportChange();
 })();
 </script>
 
 @yield('scripts')
+@stack('scripts')
 </body>
 </html>

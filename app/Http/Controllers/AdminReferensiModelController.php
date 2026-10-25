@@ -10,53 +10,159 @@ use Illuminate\Validation\Rule;
 class AdminReferensiModelController extends Controller
 {
     /**
-     * Daftar kategori dan jenis model yang diizinkan.
+     * Daftar jenis model untuk setiap kategori.
+     * Alias digunakan agar data lama tetap dapat ditampilkan.
      */
     private function daftarJenisModel(): array
     {
         return [
             'kebaya' => [
-                'Kebaya Klasik',
-                'Kebaya Modern',
-                'Kebaya Minimalis',
+                'kebaya-klasik' => [
+                    'nama' => 'Kebaya Klasik',
+                    'alias' => ['Kebaya Klasik'],
+                ],
+                'kebaya-modern' => [
+                    'nama' => 'Kebaya Modern',
+                    'alias' => ['Kebaya Modern'],
+                ],
+                'kebaya-minimalis' => [
+                    'nama' => 'Kebaya Minimalis',
+                    'alias' => ['Kebaya Minimalis'],
+                ],
             ],
+
             'dress' => [
-                'Dress Pesta',
-                'Dress Formal',
-                'Dress Casual',
+                'dress-pesta' => [
+                    'nama' => 'Dress Pesta',
+                    'alias' => ['Dress Pesta'],
+                ],
+                'dress-formal' => [
+                    'nama' => 'Dress Formal',
+                    'alias' => ['Dress Formal'],
+                ],
+                'dress-casual' => [
+                    'nama' => 'Dress Casual',
+                    'alias' => ['Dress Casual'],
+                ],
             ],
+
             'perbaikan' => [
-                'Mengecilkan Pakaian',
-                'Memendekkan Pakaian',
-                'Mengganti Resleting',
+                'perbaikan-kerusakan-robekan' => [
+                    'nama' => 'Perbaikan Kerusakan & Robekan (Mending)',
+                    'alias' => [
+                        'Perbaikan Kerusakan & Robekan (Mending)',
+                        'Memperbaiki Jahitan',
+                    ],
+                ],
+
+                'penyesuaian-ukuran-model' => [
+                    'nama' => 'Penyesuaian Ukuran & Model (Alteration / Vermak)',
+                    'alias' => [
+                        'Penyesuaian Ukuran & Model (Alteration / Vermak)',
+                        'Mengecilkan Pakaian',
+                        'Memendekkan Pakaian',
+                        'Mengganti Resleting',
+                        'Mengecilkan Ukuran',
+                        'Memperbesar Ukuran',
+                    ],
+                ],
             ],
         ];
     }
 
     /**
-     * Menampilkan halaman utama referensi model.
+     * Mengambil daftar nama jenis model yang diizinkan
+     * berdasarkan kategori.
+     */
+    private function jenisYangDiizinkan(): array
+    {
+        $hasil = [];
+
+        foreach ($this->daftarJenisModel() as $kategori => $jenis) {
+            foreach ($jenis as $dataJenis) {
+                $hasil[$kategori] = array_merge(
+                    $hasil[$kategori] ?? [],
+                    $dataJenis['alias']
+                );
+            }
+
+            $hasil[$kategori] = array_values(
+                array_unique($hasil[$kategori] ?? [])
+            );
+        }
+
+        return $hasil;
+    }
+
+    /**
+     * Memeriksa apakah jenis model sesuai dengan kategori.
+     */
+    private function jenisSesuaiKategori(
+        string $kategori,
+        string $jenisModel
+    ): bool {
+        $daftarJenis = $this->jenisYangDiizinkan();
+
+        return isset($daftarJenis[$kategori])
+            && in_array($jenisModel, $daftarJenis[$kategori], true);
+    }
+
+    /**
+     * Aturan validasi untuk menyimpan dan memperbarui referensi.
+     */
+    private function aturanValidasi(bool $fotoWajib): array
+    {
+        return [
+            'nama_model' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'kategori' => [
+                'required',
+                Rule::in(array_keys($this->daftarJenisModel())),
+            ],
+
+            'jenis_model' => [
+                'required',
+                'string',
+                'max:100',
+            ],
+
+            'deskripsi' => [
+                'nullable',
+                'string',
+            ],
+
+            'foto' => [
+                $fotoWajib ? 'required' : 'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+
+            'aktif' => [
+                'sometimes',
+                'boolean',
+            ],
+        ];
+    }
+
+    /**
+     * Menampilkan halaman utama Referensi Model.
      */
     public function index()
     {
         $referensiModels = ReferensiModel::latest()->get();
 
-        $jenisModel = [
-            'kebaya' => [
-                'kebaya-klasik' => 'Kebaya Klasik',
-                'kebaya-modern' => 'Kebaya Modern',
-                'kebaya-minimalis' => 'Kebaya Minimalis',
-            ],
-            'dress' => [
-                'dress-pesta' => 'Dress Pesta',
-                'dress-formal' => 'Dress Formal',
-                'dress-casual' => 'Dress Casual',
-            ],
-            'perbaikan' => [
-                'mengecilkan-pakaian' => 'Mengecilkan Pakaian',
-                'memendekkan-pakaian' => 'Memendekkan Pakaian',
-                'ganti-resleting' => 'Mengganti Resleting',
-            ],
-        ];
+        $jenisModel = [];
+
+        foreach ($this->daftarJenisModel() as $kategori => $jenis) {
+            foreach ($jenis as $slug => $dataJenis) {
+                $jenisModel[$kategori][$slug] = $dataJenis['nama'];
+            }
+        }
 
         return view('admin.referensi-model.index', compact(
             'referensiModels',
@@ -86,34 +192,25 @@ class AdminReferensiModelController extends Controller
     }
 
     /**
-     * Menampilkan referensi berdasarkan jenis model.
+     * Menampilkan galeri referensi berdasarkan jenis model.
+     * Data dengan nama jenis lama tetap ditampilkan melalui alias.
      */
     public function jenis(string $kategori, string $jenis)
     {
-        $daftarJenis = [
-            'kebaya' => [
-                'kebaya-klasik' => 'Kebaya Klasik',
-                'kebaya-modern' => 'Kebaya Modern',
-                'kebaya-minimalis' => 'Kebaya Minimalis',
-            ],
-            'dress' => [
-                'dress-pesta' => 'Dress Pesta',
-                'dress-formal' => 'Dress Formal',
-                'dress-casual' => 'Dress Casual',
-            ],
-            'perbaikan' => [
-                'mengecilkan-pakaian' => 'Mengecilkan Pakaian',
-                'memendekkan-pakaian' => 'Memendekkan Pakaian',
-                'ganti-resleting' => 'Mengganti Resleting',
-            ],
-        ];
+        $daftarJenis = $this->daftarJenisModel();
 
-        abort_unless(isset($daftarJenis[$kategori][$jenis]), 404);
+        abort_unless(
+            isset($daftarJenis[$kategori][$jenis]),
+            404
+        );
 
-        $namaJenis = $daftarJenis[$kategori][$jenis];
+        $dataJenis = $daftarJenis[$kategori][$jenis];
+
+        $namaJenis = $dataJenis['nama'];
+        $aliasJenis = $dataJenis['alias'];
 
         $referensiModels = ReferensiModel::where('kategori', $kategori)
-            ->where('jenis_model', $namaJenis)
+            ->whereIn('jenis_model', $aliasJenis)
             ->where('aktif', true)
             ->latest()
             ->get();
@@ -127,42 +224,13 @@ class AdminReferensiModelController extends Controller
     }
 
     /**
-     * Aturan validasi bersama untuk menyimpan dan memperbarui data.
-     */
-    private function aturanValidasi(bool $fotoWajib): array
-    {
-        return [
-            'nama_model' => ['required', 'string', 'max:255'],
-            'kategori' => [
-                'required',
-                Rule::in(array_keys($this->daftarJenisModel())),
-            ],
-            'jenis_model' => ['required', 'string', 'max:100'],
-            'deskripsi' => ['nullable', 'string'],
-            'foto' => array_filter([
-                $fotoWajib ? 'required' : 'nullable',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:2048',
-            ]),
-            'aktif' => ['sometimes', 'boolean'],
-        ];
-    }
-
-    /**
-     * Memastikan jenis model cocok dengan kategori.
+     * Memvalidasi bahwa jenis model sesuai dengan kategori.
      */
     private function validasiJenisModel(
-        Request $request,
         string $kategori,
         string $jenisModel
     ): void {
-        $daftarJenis = $this->daftarJenisModel();
-
-        if (
-            ! isset($daftarJenis[$kategori]) ||
-            ! in_array($jenisModel, $daftarJenis[$kategori], true)
-        ) {
+        if (! $this->jenisSesuaiKategori($kategori, $jenisModel)) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'jenis_model' => 'Jenis model tidak sesuai dengan kategori yang dipilih.',
             ]);
@@ -170,7 +238,7 @@ class AdminReferensiModelController extends Controller
     }
 
     /**
-     * Menyimpan referensi model baru.
+     * Menyimpan referensi model baru beserta foto.
      */
     public function store(Request $request)
     {
@@ -179,20 +247,20 @@ class AdminReferensiModelController extends Controller
         );
 
         $this->validasiJenisModel(
-            $request,
             $validated['kategori'],
             $validated['jenis_model']
         );
 
-        $validated['foto'] = $request->file('foto')
+        $fotoBaru = $request->file('foto')
             ->store('referensi-model', 'public');
 
+        $validated['foto'] = $fotoBaru;
         $validated['aktif'] = $request->boolean('aktif');
 
         try {
             ReferensiModel::create($validated);
         } catch (\Throwable $e) {
-            Storage::disk('public')->delete($validated['foto']);
+            Storage::disk('public')->delete($fotoBaru);
 
             throw $e;
         }
@@ -214,7 +282,6 @@ class AdminReferensiModelController extends Controller
         );
 
         $this->validasiJenisModel(
-            $request,
             $validated['kategori'],
             $validated['jenis_model']
         );
@@ -241,6 +308,7 @@ class AdminReferensiModelController extends Controller
             throw $e;
         }
 
+        // Hapus foto lama hanya setelah pembaruan berhasil.
         if ($fotoBaru && $fotoLama) {
             Storage::disk('public')->delete($fotoLama);
         }
@@ -251,7 +319,7 @@ class AdminReferensiModelController extends Controller
     }
 
     /**
-     * Menghapus referensi model.
+     * Menghapus referensi model beserta fotonya.
      */
     public function destroy(ReferensiModel $referensiModel)
     {

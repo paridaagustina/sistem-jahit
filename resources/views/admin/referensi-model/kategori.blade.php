@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -142,23 +141,17 @@
             outline-offset: -3px;
         }
 
-        .model-photo {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            display: block;
-            background: #f1dfe0;
-        }
-
         .placeholder {
-            height: 220px;
+            min-height: 220px;
+            padding: 20px;
             background: #f1dfe0;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             color: #8f6268;
+            text-align: center;
         }
 
         .placeholder .icon {
@@ -167,6 +160,7 @@
 
         .placeholder span:last-child {
             font-size: 13px;
+            line-height: 1.6;
         }
 
         .card-content {
@@ -178,6 +172,7 @@
 
         .card-content h3 {
             font-size: 18px;
+            line-height: 1.5;
             margin-bottom: 10px;
         }
 
@@ -306,8 +301,10 @@
                 Pilih Dress Pesta, Dress Formal, atau Dress Casual untuk
                 melihat kumpulan foto referensi masing-masing.
             @else
-                Pilih jenis layanan untuk melihat referensi dan informasi
-                layanan perbaikan pakaian.
+                Pilih salah satu dari dua kelompok layanan, yaitu Perbaikan
+                Kerusakan & Robekan (Mending) atau Penyesuaian Ukuran & Model
+                (Alteration / Vermak). Setiap pilihan membuka galeri referensi
+                layanan yang sesuai.
             @endif
         </p>
     </section>
@@ -324,7 +321,7 @@
 
     <p class="section-description">
         Klik salah satu kartu atau tombol di bawahnya untuk membuka halaman
-        jenis model yang dipilih.
+        jenis model atau layanan yang dipilih.
     </p>
 
     @php
@@ -349,6 +346,7 @@
                     'ikon' => '🌷',
                 ],
             ],
+
             'dress' => [
                 [
                     'slug' => 'dress-pesta',
@@ -369,24 +367,19 @@
                     'ikon' => '🌸',
                 ],
             ],
+
             'perbaikan' => [
                 [
-                    'slug' => 'mengecilkan-pakaian',
-                    'nama' => 'Mengecilkan Pakaian',
-                    'deskripsi' => 'Informasi layanan penyesuaian ukuran pakaian.',
-                    'ikon' => '🧵',
-                ],
-                [
-                    'slug' => 'memendekkan-pakaian',
-                    'nama' => 'Memendekkan Pakaian',
-                    'deskripsi' => 'Informasi layanan memendekkan pakaian atau celana.',
-                    'ikon' => '✂️',
-                ],
-                [
-                    'slug' => 'ganti-resleting',
-                    'nama' => 'Mengganti Resleting',
-                    'deskripsi' => 'Informasi layanan penggantian resleting pakaian.',
+                    'slug' => 'perbaikan-kerusakan-robekan',
+                    'nama' => 'Perbaikan Kerusakan & Robekan (Mending)',
+                    'deskripsi' => 'Layanan untuk memperbaiki pakaian yang rusak, sobek, jahitan terlepas, atau bagian pakaian yang perlu diperbaiki.',
                     'ikon' => '🪡',
+                ],
+                [
+                    'slug' => 'penyesuaian-ukuran-model',
+                    'nama' => 'Penyesuaian Ukuran & Model (Alteration / Vermak)',
+                    'deskripsi' => 'Layanan untuk menyesuaikan ukuran dan model pakaian, seperti mengecilkan, memperbesar, memendekkan, atau mengganti resleting.',
+                    'ikon' => '✂️',
                 ],
             ],
         ];

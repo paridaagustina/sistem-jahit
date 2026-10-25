@@ -9,12 +9,12 @@ class PelangganPesananController extends Controller
 {
     public function index()
     {
-        $pesanan = Pesanan::where(
-            'id_user',
-            Auth::user()->id_user
-        )
-        ->orderBy('tanggal_pesan', 'desc')
-        ->get();
+        $idUser = Auth::user()->id_user;
+
+        $pesanan = Pesanan::with('rating')
+            ->where('id_user', $idUser)
+            ->orderBy('tanggal_pesan', 'desc')
+            ->get();
 
         return view(
             'pelanggan.pesanan.index',

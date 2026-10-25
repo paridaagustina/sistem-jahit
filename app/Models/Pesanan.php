@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Pesanan extends Model
 {
@@ -33,7 +34,6 @@ class Pesanan extends Model
         'status_pengerjaan',
     ];
 
-
     // =========================
     // RELASI KE PELANGGAN
     // =========================
@@ -45,7 +45,6 @@ class Pesanan extends Model
             'id_user'
         );
     }
-
 
     // =========================
     // RELASI KE KARYAWAN
@@ -59,7 +58,6 @@ class Pesanan extends Model
         );
     }
 
-
     // =========================
     // RELASI KE REVISI
     // =========================
@@ -67,6 +65,19 @@ class Pesanan extends Model
     {
         return $this->hasMany(
             Revisi::class,
+            'id_pesanan',
+            'id_pesanan'
+        );
+    }
+
+    // =========================
+    // RELASI KE RATING
+    // Satu pesanan memiliki maksimal satu rating
+    // =========================
+    public function rating(): HasOne
+    {
+        return $this->hasOne(
+            Rating::class,
             'id_pesanan',
             'id_pesanan'
         );

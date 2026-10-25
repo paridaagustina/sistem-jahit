@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pesanan;
 use App\Models\StatusPengerjaan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class AdminStatusPengerjaanController extends Controller
 {
@@ -17,6 +15,7 @@ class AdminStatusPengerjaanController extends Controller
             'user',
         ]);
 
+        // Pencarian berdasarkan ID pesanan atau nama pelanggan.
         if ($request->filled('cari')) {
             $cari = trim($request->input('cari'));
 
@@ -28,6 +27,7 @@ class AdminStatusPengerjaanController extends Controller
             });
         }
 
+        // Filter berdasarkan status pengerjaan.
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
@@ -38,13 +38,15 @@ class AdminStatusPengerjaanController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // Ambil status terakhir dari setiap pesanan yang memiliki riwayat.
+        /*
+         * Mengambil satu riwayat status terbaru untuk setiap pesanan.
+         */
         $statusTerbaru = StatusPengerjaan::query()
             ->select('id_pesanan')
             ->selectRaw('MAX(id_status) AS id_status')
             ->groupBy('id_pesanan');
 
-        $riwayatTerbaru = DB::table('status_pengerjaan')
+        $riwayatTerbaru = StatusPengerjaan::query()
             ->joinSub($statusTerbaru, 'terbaru', function ($join) {
                 $join->on(
                     'status_pengerjaan.id_status',
@@ -53,8 +55,12 @@ class AdminStatusPengerjaanController extends Controller
                 );
             });
 
-        $totalPesanan = (clone $riwayatTerbaru)->count();
+        // Total pesanan yang memiliki riwayat status.
+        $totalPesanan = (clone $riwayatTerbaru)
+            ->distinct('status_pengerjaan.id_pesanan')
+            ->count('status_pengerjaan.id_pesanan');
 
+        // Pesanan yang masih menunggu.
         $totalMenunggu = (clone $riwayatTerbaru)
             ->whereIn('status_pengerjaan.status', [
                 'Menunggu',
@@ -63,6 +69,7 @@ class AdminStatusPengerjaanController extends Controller
             ])
             ->count();
 
+        // Pesanan yang sedang dikerjakan.
         $totalProses = (clone $riwayatTerbaru)
             ->whereIn('status_pengerjaan.status', [
                 'Sedang Dikerjakan',
@@ -75,6 +82,7 @@ class AdminStatusPengerjaanController extends Controller
             ])
             ->count();
 
+        // Pesanan yang sudah selesai.
         $totalSelesai = (clone $riwayatTerbaru)
             ->whereIn('status_pengerjaan.status', [
                 'Selesai',

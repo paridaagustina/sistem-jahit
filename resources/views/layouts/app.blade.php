@@ -340,19 +340,17 @@
         </a>
     </li>
 
-    <li>
-        <a href="{{ route('dashboard') }}">
-            <i class="fa-solid fa-ruler-combined"></i>
-            <span>Ukuran Saya</span>
-        </a>
-    </li>
+            <li>
+                <a href="{{ route('dashboard') }}">
+                    Ukuran Saya
+                </a>
+            </li>
 
-    <li>
-        <a href="{{ route('dashboard') }}">
-            <i class="fa-solid fa-shirt"></i>
-            <span>Referensi Model</span>
-        </a>
-    </li>
+            <li>
+                <a href="{{ route('dashboard') }}">
+                    Referensi Model
+                </a>
+            </li>
 
     <li>
         <a href="{{ route('dashboard') }}">
@@ -368,19 +366,17 @@
         </a>
     </li>
 
-    <li>
-        <a href="{{ route('dashboard') }}">
-            <i class="fa-solid fa-bell"></i>
-            <span>Notifikasi</span>
-        </a>
-    </li>
+            <li>
+                <a href="{{ route('dashboard') }}">
+                    Notifikasi
+                </a>
+            </li>
 
-    <li>
-        <a href="{{ route('dashboard') }}">
-            <i class="fa-solid fa-box-open"></i>
-            <span>Pengambilan</span>
-        </a>
-    </li>
+            <li>
+                <a href="{{ route('dashboard') }}">
+                    Pengambilan
+                </a>
+            </li>
 
 </ul>
 
