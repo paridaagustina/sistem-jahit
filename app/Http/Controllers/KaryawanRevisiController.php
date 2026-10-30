@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
 use App\Models\Revisi;
+use App\Services\FonnteService;
 use Illuminate\Http\Request;
 
 class KaryawanRevisiController extends Controller
 {
-    /**
-     * Menampilkan seluruh data revisi.
-     */
     public function index()
     {
         $revisi = Revisi::with(['pesanan.user'])
@@ -20,9 +18,6 @@ class KaryawanRevisiController extends Controller
         return view('karyawan.revisi.index', compact('revisi'));
     }
 
-    /**
-     * Menampilkan form tambah revisi.
-     */
     public function create()
     {
         $pesanan = Pesanan::with('user')
@@ -32,10 +27,7 @@ class KaryawanRevisiController extends Controller
         return view('karyawan.revisi.create', compact('pesanan'));
     }
 
-    /**
-     * Menyimpan data revisi baru.
-     */
-    public function store(Request $request)
+    public function store(Request $request, FonnteService $fonnte)
     {
         $validated = $request->validate([
             'id_pesanan' => 'required|exists:pesanan,id_pesanan',
@@ -49,9 +41,10 @@ class KaryawanRevisiController extends Controller
             'biaya_revisi' => 'nullable|numeric|min:0',
         ]);
 
-        $pesanan = Pesanan::findOrFail($validated['id_pesanan']);
+        $pesanan = Pesanan::with('user')
+            ->findOrFail($validated['id_pesanan']);
 
-        Revisi::create([
+        $revisi = Revisi::create([
             'id_pesanan' => $pesanan->id_pesanan,
             'id_user' => $pesanan->id_user,
             'keterangan' => $validated['keterangan'],
@@ -60,34 +53,33 @@ class KaryawanRevisiController extends Controller
             'biaya_revisi' => $validated['biaya_revisi'] ?? 0,
         ]);
 
-        return redirect()
-            ->route('karyawan.revisi.index')
+        $this->kirimNotifikasiRevisi(
+            $fonnte,
+            $pesanan,
+            $revisi,
+            'ditambahkan'
+        );
+
+        return redirect()->route('karyawan.revisi.index')
             ->with('success', 'Data revisi berhasil ditambahkan.');
     }
 
-    /**
-     * Menampilkan form edit revisi.
-     */
     public function edit($id)
     {
-        $revisi = Revisi::with(['pesanan.user'])
-            ->findOrFail($id);
+        $revisi = Revisi::with(['pesanan.user'])->findOrFail($id);
 
         $pesanan = Pesanan::with('user')
             ->orderBy('tanggal_pesan', 'desc')
             ->get();
 
-        return view(
-            'karyawan.revisi.edit',
-            compact('revisi', 'pesanan')
-        );
+        return view('karyawan.revisi.edit', compact('revisi', 'pesanan'));
     }
 
-    /**
-     * Memperbarui data revisi.
-     */
-    public function update(Request $request, $id)
-    {
+    public function update(
+        Request $request,
+        $id,
+        FonnteService $fonnte
+    ) {
         $validated = $request->validate([
             'id_pesanan' => 'required|exists:pesanan,id_pesanan',
             'keterangan' => 'required|string',
@@ -100,7 +92,9 @@ class KaryawanRevisiController extends Controller
             'biaya_revisi' => 'nullable|numeric|min:0',
         ]);
 
-        $pesanan = Pesanan::findOrFail($validated['id_pesanan']);
+        $pesanan = Pesanan::with('user')
+            ->findOrFail($validated['id_pesanan']);
+
         $revisi = Revisi::findOrFail($id);
 
         $revisi->update([
@@ -112,21 +106,62 @@ class KaryawanRevisiController extends Controller
             'biaya_revisi' => $validated['biaya_revisi'] ?? 0,
         ]);
 
-        return redirect()
-            ->route('karyawan.revisi.index')
+        $revisi->refresh();
+
+        $this->kirimNotifikasiRevisi(
+            $fonnte,
+            $pesanan,
+            $revisi,
+            'diperbarui'
+        );
+
+        return redirect()->route('karyawan.revisi.index')
             ->with('success', 'Data revisi berhasil diperbarui.');
     }
 
-    /**
-     * Menghapus data revisi.
-     */
     public function destroy($id)
     {
         $revisi = Revisi::findOrFail($id);
         $revisi->delete();
 
-        return redirect()
-            ->route('karyawan.revisi.index')
+        return redirect()->route('karyawan.revisi.index')
             ->with('success', 'Data revisi berhasil dihapus.');
+    }
+
+    private function kirimNotifikasiRevisi(
+        FonnteService $fonnte,
+        Pesanan $pesanan,
+        Revisi $revisi,
+        string $aksi
+    ): void {
+        $pelanggan = $pesanan->user;
+
+        if (!$pelanggan || empty($pelanggan->no_hp)) {
+            return;
+        }
+
+        $biaya = (float) ($revisi->biaya_revisi ?? 0);
+
+        $pesan = "Halo, pelanggan Toko Jahit Lina.\n\n"
+            . "Informasi revisi jahitan Anda telah {$aksi}.\n\n"
+            . "Nomor Pesanan: #{$pesanan->id_pesanan}\n"
+            . "Keterangan Revisi: {$revisi->keterangan}\n"
+            . "Tanggal Revisi: {$revisi->tanggal_revisi}\n"
+            . "Batas Waktu Revisi: {$revisi->batas_waktu_revisi}\n"
+            . "Biaya Revisi: Rp" . number_format($biaya, 0, ',', '.') . "\n\n"
+            . "Silakan hubungi Toko Jahit Lina jika ada pertanyaan.\n"
+            . "Terima kasih.";
+
+        $berhasil = $fonnte->send($pelanggan->no_hp, $pesan);
+
+\Illuminate\Support\Facades\Log::info(
+    'NOTIFIKASI WHATSAPP REVISI',
+    [
+        'id_pesanan' => $pesanan->id_pesanan,
+        'aksi' => $aksi,
+        'nomor' => $pelanggan->no_hp,
+        'berhasil' => $berhasil,
+    ]
+);
     }
 }

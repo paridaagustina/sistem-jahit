@@ -1,8 +1,8 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\KaryawanDashboardController;
@@ -19,7 +19,6 @@ use App\Http\Controllers\UkuranController;
 use App\Http\Controllers\PelangganUkuranController;
 use App\Http\Controllers\KaryawanRevisiController;
 use App\Http\Controllers\KaryawanStatusPengerjaanController;
-
 use App\Http\Controllers\AdminUkuranController;
 use App\Http\Controllers\AdminReferensiModelController;
 use App\Http\Controllers\AdminStatusPengerjaanController;
@@ -30,401 +29,67 @@ use App\Http\Controllers\AdminStatusPengerjaanController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/login', [AuthController::class, 'showLogin'])
-    ->name('login');
+Route::get('/login', [
+    AuthController::class,
+    'showLogin',
+])->name('login');
 
-Route::post('/login', [AuthController::class, 'login'])
-    ->name('login.process');
+Route::post('/login', [
+    AuthController::class,
+    'login',
+])->name('login.process');
 
-Route::get('/register', [AuthController::class, 'showRegister'])
-    ->name('register');
+Route::get('/register', [
+    AuthController::class,
+    'showRegister',
+])->name('register');
 
-Route::post('/register', [AuthController::class, 'register'])
-    ->name('register.process');
-
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->name('logout');
+Route::post('/register', [
+    AuthController::class,
+    'register',
+])->name('register.process');
 
 /*
 |--------------------------------------------------------------------------
-| ROUTE YANG MEMBUTUHKAN LOGIN
+| GOOGLE SSO
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
-
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/dashboard', [
-        AdminDashboardController::class,
-        'index'
-    ])->name('admin.dashboard');
-
-    Route::get('/dashboard', function () {
-        return view('pelanggan.dashboard');
-    })->name('dashboard');
-
-    Route::get('/karyawan/dashboard', [
-        KaryawanDashboardController::class,
-        'index'
-    ])->name('karyawan.dashboard');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PESANAN ADMIN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/pesanan', [
-        PesananController::class,
-        'index'
-    ])->name('admin.pesanan.index');
-
-    Route::get('/admin/pesanan/create', [
-        PesananController::class,
-        'create'
-    ])->name('admin.pesanan.create');
-
-    Route::post('/admin/pesanan', [
-        PesananController::class,
-        'store'
-    ])->name('admin.pesanan.store');
-
-    Route::get('/admin/pesanan/{id}/edit', [
-        PesananController::class,
-        'edit'
-    ])->name('admin.pesanan.edit');
-
-    Route::put('/admin/pesanan/{id}', [
-        PesananController::class,
-        'update'
-    ])->name('admin.pesanan.update');
-
-    Route::delete('/admin/pesanan/{id}', [
-        PesananController::class,
-        'destroy'
-    ])->name('admin.pesanan.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PESAN JASA JAHIT PELANGGAN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/pesan-jasa-jahit', [
-        PesananController::class,
-        'createPelanggan'
-    ])->name('pelanggan.pesanan.create');
-
-    Route::post('/pesan-jasa-jahit', [
-        PesananController::class,
-        'storePelanggan'
-    ])->name('pelanggan.pesanan.store');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PESANAN SAYA PELANGGAN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/pesanan-saya', [
-        PelangganPesananController::class,
-        'index'
-    ])->name('pelanggan.pesanan.index');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PEMBAYARAN PELANGGAN - MIDTRANS
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/pesanan-saya/{id}/bayar', [
-        PaymentController::class,
-        'pay'
-    ])->name('pelanggan.pembayaran.pay');
-
-    /*
-    |--------------------------------------------------------------------------
-    | DATA PELANGGAN ADMIN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/pelanggan', [
-        PelangganController::class,
-        'index'
-    ])->name('admin.pelanggan.index');
-
-    Route::get('/admin/pelanggan/create', [
-        PelangganController::class,
-        'create'
-    ])->name('admin.pelanggan.create');
-
-    Route::post('/admin/pelanggan', [
-        PelangganController::class,
-        'store'
-    ])->name('admin.pelanggan.store');
-
-    Route::get('/admin/pelanggan/{id}/edit', [
-        PelangganController::class,
-        'edit'
-    ])->name('admin.pelanggan.edit');
-
-    Route::put('/admin/pelanggan/{id}', [
-        PelangganController::class,
-        'update'
-    ])->name('admin.pelanggan.update');
-
-    Route::delete('/admin/pelanggan/{id}', [
-        PelangganController::class,
-        'destroy'
-    ])->name('admin.pelanggan.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | REVISI PESANAN ADMIN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/pesanan/{id}/revisi', [
-        RevisiController::class,
-        'index'
-    ])->name('admin.revisi.index');
-
-    Route::get('/admin/pesanan/{id}/revisi/create', [
-        RevisiController::class,
-        'create'
-    ])->name('admin.revisi.create');
-
-    Route::post('/admin/pesanan/{id}/revisi', [
-        RevisiController::class,
-        'store'
-    ])->name('admin.revisi.store');
-
-    Route::get('/admin/revisi/{id}/edit', [
-        RevisiController::class,
-        'edit'
-    ])->name('admin.revisi.edit');
-
-    Route::put('/admin/revisi/{id}', [
-        RevisiController::class,
-        'update'
-    ])->name('admin.revisi.update');
-
-    Route::delete('/admin/revisi/{id}', [
-        RevisiController::class,
-        'destroy'
-    ])->name('admin.revisi.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | LAPORAN ADMIN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/laporan', [
-        LaporanController::class,
-        'index'
-    ])->name('admin.laporan.index');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PEMBAYARAN ADMIN
-    |--------------------------------------------------------------------------
-    | Admin memantau transaksi pelanggan melalui controller terpisah.
-    | Route ini belum mencakup fitur tambah/edit/hapus transaksi.
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/pembayaran', [
-        AdminPembayaranController::class,
-        'index'
-    ])->name('admin.pembayaran.index');
-
-    /*
-    |--------------------------------------------------------------------------
-    | DATA UKURAN KARYAWAN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/karyawan/ukuran', [
-        UkuranController::class,
-        'index'
-    ])->name('karyawan.ukuran.index');
-
-    Route::get('/karyawan/ukuran/create', [
-        UkuranController::class,
-        'create'
-    ])->name('karyawan.ukuran.create');
-
-    Route::post('/karyawan/ukuran', [
-        UkuranController::class,
-        'store'
-    ])->name('karyawan.ukuran.store');
-
-    Route::get('/karyawan/ukuran/{id}/edit', [
-        UkuranController::class,
-        'edit'
-    ])->name('karyawan.ukuran.edit');
-
-    Route::put('/karyawan/ukuran/{id}', [
-        UkuranController::class,
-        'update'
-    ])->name('karyawan.ukuran.update');
-
-    /*
-    |--------------------------------------------------------------------------
-    | REVISI KARYAWAN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/karyawan/revisi', [
-        KaryawanRevisiController::class,
-        'index'
-    ])->name('karyawan.revisi.index');
-
-    Route::get('/karyawan/revisi/create', [
-        KaryawanRevisiController::class,
-        'create'
-    ])->name('karyawan.revisi.create');
-
-    Route::post('/karyawan/revisi', [
-        KaryawanRevisiController::class,
-        'store'
-    ])->name('karyawan.revisi.store');
-
-    Route::get('/karyawan/revisi/{id}/edit', [
-        KaryawanRevisiController::class,
-        'edit'
-    ])->name('karyawan.revisi.edit');
-
-    Route::put('/karyawan/revisi/{id}', [
-        KaryawanRevisiController::class,
-        'update'
-    ])->name('karyawan.revisi.update');
-
-    Route::delete('/karyawan/revisi/{id}', [
-        KaryawanRevisiController::class,
-        'destroy'
-    ])->name('karyawan.revisi.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | STATUS PENGERJAAN KARYAWAN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/karyawan/pengerjaan', [
-        KaryawanStatusPengerjaanController::class,
-        'index'
-    ])->name('karyawan.pengerjaan.index');
-
-    Route::put('/karyawan/pengerjaan/{id}', [
-        KaryawanStatusPengerjaanController::class,
-        'update'
-    ])->name('karyawan.pengerjaan.update');
-
-    /*
-    |--------------------------------------------------------------------------
-    | DATA UKURAN ADMIN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/ukuran', [
-        AdminUkuranController::class,
-        'index'
-    ])->name('admin.ukuran.index');
-
-    Route::get('/admin/ukuran/create', [
-        AdminUkuranController::class,
-        'create'
-    ])->name('admin.ukuran.create');
-
-    Route::post('/admin/ukuran', [
-        AdminUkuranController::class,
-        'store'
-    ])->name('admin.ukuran.store');
-
-    Route::get('/admin/ukuran/{id}/edit', [
-        AdminUkuranController::class,
-        'edit'
-    ])->name('admin.ukuran.edit');
-
-    Route::put('/admin/ukuran/{id}', [
-        AdminUkuranController::class,
-        'update'
-    ])->name('admin.ukuran.update');
-
-    Route::delete('/admin/ukuran/{id}', [
-        AdminUkuranController::class,
-        'destroy'
-    ])->name('admin.ukuran.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | REFERENSI MODEL ADMIN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/referensi-model', [
-        AdminReferensiModelController::class,
-        'index'
-    ])->name('admin.referensi-model.index');
-
-    Route::post('/admin/referensi-model', [
-        AdminReferensiModelController::class,
-        'store'
-    ])->name('admin.referensi-model.store');
-
-    Route::get('/admin/referensi-model/{kategori}', [
-        AdminReferensiModelController::class,
-        'kategori'
-    ])->whereIn('kategori', [
-        'kebaya',
-        'dress',
-        'perbaikan',
-    ])->name('admin.referensi-model.kategori');
-
-    Route::get('/admin/referensi-model/{kategori}/jenis/{jenis}', [
-        AdminReferensiModelController::class,
-        'jenis'
-    ])->whereIn('kategori', [
-        'kebaya',
-        'dress',
-        'perbaikan',
-    ])->name('admin.referensi-model.jenis');
-
-    Route::put('/admin/referensi-model/{referensiModel}', [
-        AdminReferensiModelController::class,
-        'update'
-    ])->name('admin.referensi-model.update');
-
-    Route::delete('/admin/referensi-model/{referensiModel}', [
-        AdminReferensiModelController::class,
-        'destroy'
-    ])->name('admin.referensi-model.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | STATUS PENGERJAAN ADMIN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/status-pengerjaan', [
-        AdminStatusPengerjaanController::class,
-        'index'
-    ])->name('admin.status-pengerjaan.index');
-
-    Route::put('/admin/status-pengerjaan/{id}', [
-        AdminStatusPengerjaanController::class,
-        'update'
-    ])->name('admin.status-pengerjaan.update');
-
-});
-
+Route::get('/auth/google', [
+    AuthController::class,
+    'redirectToGoogle',
+])->name('google.redirect');
+
+Route::get('/auth/google/callback', [
+    AuthController::class,
+    'handleGoogleCallback',
+])->name('google.callback');
+
+Route::post('/logout', [
+    AuthController::class,
+    'logout',
+])->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| MIDTRANS WEBHOOK
+|--------------------------------------------------------------------------
+| Endpoint ini harus dapat diakses Midtrans tanpa login.
+*/
+
+Route::post('/midtrans/webhook', [
+    MidtransWebhookController::class,
+    'handle',
+])->name('midtrans.webhook');
+
+/*
+|--------------------------------------------------------------------------
+| HALAMAN PUBLIK
+|--------------------------------------------------------------------------
+*/
+
+Route::view('/', 'user.beranda')
+    ->name('user.beranda');
 
 Route::view('/katalog-model', 'user.katalog')
     ->name('user.katalog');
@@ -440,106 +105,428 @@ Route::view('/tentang-kami', 'user.tentang_kami')
 
 Route::view('/kontak', 'user.kontak')
     ->name('user.kontak');
-Route::view('/', 'user.beranda')
-    ->name('user.beranda');
 
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD DAN FITUR PENGGUNA LOGIN
+|--------------------------------------------------------------------------
+*/
 
+Route::middleware('auth')->group(function () {
 
-    Route::middleware(['auth', 'role:karyawan'])
-    ->prefix('karyawan')
-    ->name('karyawan.')
-    ->group(function () {
-        Route::get(
-            '/pengerjaan',
-            [KaryawanStatusPengerjaanController::class, 'index']
-        )->name('pengerjaan.index');
+    /*
+    |--------------------------------------------------------------------------
+    | TES KIRIM ULANG WHATSAPP
+    |--------------------------------------------------------------------------
+    | Hanya untuk pengujian sementara.
+    | Wajib login dan pembayaran harus sudah Berhasil.
+    */
 
-        Route::patch(
-            '/pengerjaan/{id}',
-            [KaryawanStatusPengerjaanController::class, 'update']
-        )->name('pengerjaan.update');
+    Route::get('/test-whatsapp/{orderId}', [
+        MidtransWebhookController::class,
+        'kirimUlangWhatsApp',
+    ])->name('test.whatsapp');
+
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/admin/dashboard', [
+        AdminDashboardController::class,
+        'index',
+    ])->name('admin.dashboard');
+
+    Route::get('/dashboard', [
+        PelangganDashboardController::class,
+        'index',
+    ])->name('dashboard');
+
+    Route::get('/karyawan/dashboard', [
+        KaryawanDashboardController::class,
+        'index',
+    ])->name('karyawan.dashboard');
+
+    /*
+    |--------------------------------------------------------------------------
+    | PESANAN ADMIN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/admin/pesanan', [
+        PesananController::class,
+        'index',
+    ])->name('admin.pesanan.index');
+
+    Route::get('/admin/pesanan/create', [
+        PesananController::class,
+        'create',
+    ])->name('admin.pesanan.create');
+
+    Route::post('/admin/pesanan', [
+        PesananController::class,
+        'store',
+    ])->name('admin.pesanan.store');
+
+    Route::get('/admin/pesanan/{id}/edit', [
+        PesananController::class,
+        'edit',
+    ])->name('admin.pesanan.edit');
+
+    Route::put('/admin/pesanan/{id}', [
+        PesananController::class,
+        'update',
+    ])->name('admin.pesanan.update');
+
+    Route::delete('/admin/pesanan/{id}', [
+        PesananController::class,
+        'destroy',
+    ])->name('admin.pesanan.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | PESAN JASA JAHIT PELANGGAN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/pesan-jasa-jahit', [
+        PesananController::class,
+        'createPelanggan',
+    ])->name('pelanggan.pesanan.create');
+
+    Route::post('/pesan-jasa-jahit', [
+        PesananController::class,
+        'storePelanggan',
+    ])->name('pelanggan.pesanan.store');
+
+    /*
+    |--------------------------------------------------------------------------
+    | PESANAN SAYA
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/pesanan-saya', [
+        PelangganPesananController::class,
+        'index',
+    ])->name('pelanggan.pesanan.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | PEMBAYARAN DAN FITUR PELANGGAN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:pelanggan')->group(function () {
+
+        Route::get('/pembayaran-saya', [
+            PembayaranController::class,
+            'indexPelanggan',
+        ])->name('pelanggan.pembayaran.index');
+
+        Route::get('/pesanan-saya/{id}/bayar', [
+            PaymentController::class,
+            'pay',
+        ])->name('pelanggan.pembayaran.pay');
+
+        Route::get('/ukuran-saya', [
+            PelangganUkuranController::class,
+            'index',
+        ])->name('pelanggan.ukuran.index');
+
+        Route::post('/ukuran-saya', [
+            PelangganUkuranController::class,
+            'store',
+        ])->name('pelanggan.ukuran.store');
+
+        Route::put('/ukuran-saya/{id}', [
+            PelangganUkuranController::class,
+            'update',
+        ])->name('pelanggan.ukuran.update');
+
+        Route::delete('/ukuran-saya/{id}', [
+            PelangganUkuranController::class,
+            'destroy',
+        ])->name('pelanggan.ukuran.destroy');
+
+        Route::get('/revisi-saya', [
+            RevisiController::class,
+            'riwayatPelanggan',
+        ])->name('pelanggan.revisi.index');
     });
 
     /*
-|--------------------------------------------------------------------------
-| UKURAN SAYA - PELANGGAN
-|--------------------------------------------------------------------------
-*/
+    |--------------------------------------------------------------------------
+    | DATA PELANGGAN ADMIN
+    |--------------------------------------------------------------------------
+    */
 
-/*
-|--------------------------------------------------------------------------
-| UKURAN SAYA - PELANGGAN
-|--------------------------------------------------------------------------
-*/
+    Route::get('/admin/pelanggan', [
+        PelangganController::class,
+        'index',
+    ])->name('admin.pelanggan.index');
 
-Route::get('/ukuran-saya', [
-    PelangganUkuranController::class,
-    'index'
-])->name('pelanggan.ukuran.index');
+    Route::get('/admin/pelanggan/create', [
+        PelangganController::class,
+        'create',
+    ])->name('admin.pelanggan.create');
 
-Route::post('/ukuran-saya', [
-    PelangganUkuranController::class,
-    'store'
-])->name('pelanggan.ukuran.store');
+    Route::post('/admin/pelanggan', [
+        PelangganController::class,
+        'store',
+    ])->name('admin.pelanggan.store');
 
-Route::put('/ukuran-saya/{id}', [
-    PelangganUkuranController::class,
-    'update'
-])->name('pelanggan.ukuran.update');
+    Route::get('/admin/pelanggan/{id}/edit', [
+        PelangganController::class,
+        'edit',
+    ])->name('admin.pelanggan.edit');
 
-Route::delete('/ukuran-saya/{id}', [
-    PelangganUkuranController::class,
-    'destroy'
-])->name('pelanggan.ukuran.destroy');
+    Route::put('/admin/pelanggan/{id}', [
+        PelangganController::class,
+        'update',
+    ])->name('admin.pelanggan.update');
 
+    Route::delete('/admin/pelanggan/{id}', [
+        PelangganController::class,
+        'destroy',
+    ])->name('admin.pelanggan.destroy');
 
+    /*
+    |--------------------------------------------------------------------------
+    | REVISI PESANAN ADMIN
+    |--------------------------------------------------------------------------
+    */
 
-/*
-|--------------------------------------------------------------------------
-| PEMBAYARAN SAYA - PELANGGAN
-|--------------------------------------------------------------------------
-*/
+    Route::get('/admin/pesanan/{id}/revisi', [
+        RevisiController::class,
+        'index',
+    ])->name('admin.revisi.index');
 
+    Route::get('/admin/pesanan/{id}/revisi/create', [
+        RevisiController::class,
+        'create',
+    ])->name('admin.revisi.create');
 
-/*
-|--------------------------------------------------------------------------
-| ROUTE KHUSUS PELANGGAN
-|--------------------------------------------------------------------------
-*/
+    Route::post('/admin/pesanan/{id}/revisi', [
+        RevisiController::class,
+        'store',
+    ])->name('admin.revisi.store');
 
-Route::middleware(['auth', 'role:pelanggan'])->group(function () {
+    Route::get('/admin/revisi/{id}/edit', [
+        RevisiController::class,
+        'edit',
+    ])->name('admin.revisi.edit');
 
-    // Daftar pembayaran pelanggan
-    Route::get('/pembayaran-saya', [
-        PembayaranController::class,
-        'indexPelanggan'
-    ])->name('pelanggan.pembayaran.index');
+    Route::put('/admin/revisi/{id}', [
+        RevisiController::class,
+        'update',
+    ])->name('admin.revisi.update');
 
-    // Halaman pembayaran pesanan pelanggan
-    Route::get('/pesanan-saya/{id}/bayar', [
-        PaymentController::class,
-        'pay'
-    ])->name('pelanggan.pembayaran.pay');
+    Route::delete('/admin/revisi/{id}', [
+        RevisiController::class,
+        'destroy',
+    ])->name('admin.revisi.destroy');
 
-});
+    /*
+    |--------------------------------------------------------------------------
+    | LAPORAN ADMIN
+    |--------------------------------------------------------------------------
+    */
 
+    Route::get('/admin/laporan', [
+        LaporanController::class,
+        'index',
+    ])->name('admin.laporan.index');
 
-/*
-|--------------------------------------------------------------------------
-| RIWAYAT REVISI PELANGGAN
-|--------------------------------------------------------------------------
-*/
+    /*
+    |--------------------------------------------------------------------------
+    | PEMBAYARAN ADMIN
+    |--------------------------------------------------------------------------
+    */
 
-Route::get('/revisi-saya', [
-    RevisiController::class,
-    'riwayatPelanggan'
-])->name('pelanggan.revisi.index');
+    Route::get('/admin/pembayaran', [
+        AdminPembayaranController::class,
+        'index',
+    ])->name('admin.pembayaran.index');
 
-Route::get('/pesanan-saya/{id}/bayar', [PaymentController::class, 'pay'])
-    ->middleware('auth')
-    ->name('pelanggan.pembayaran.pay');
+    /*
+    |--------------------------------------------------------------------------
+    | FITUR KARYAWAN
+    |--------------------------------------------------------------------------
+    */
 
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [PelangganDashboardController::class, 'index'])
-        ->name('dashboard');
+    Route::middleware('role:karyawan')->group(function () {
+
+        // UKURAN
+
+        Route::get('/karyawan/ukuran', [
+            UkuranController::class,
+            'index',
+        ])->name('karyawan.ukuran.index');
+
+        Route::get('/karyawan/ukuran/create', [
+            UkuranController::class,
+            'create',
+        ])->name('karyawan.ukuran.create');
+
+        Route::post('/karyawan/ukuran', [
+            UkuranController::class,
+            'store',
+        ])->name('karyawan.ukuran.store');
+
+        Route::get('/karyawan/ukuran/{id}/edit', [
+            UkuranController::class,
+            'edit',
+        ])->name('karyawan.ukuran.edit');
+
+        Route::put('/karyawan/ukuran/{id}', [
+            UkuranController::class,
+            'update',
+        ])->name('karyawan.ukuran.update');
+
+        // REVISI KARYAWAN
+
+        Route::get('/karyawan/revisi', [
+            KaryawanRevisiController::class,
+            'index',
+        ])->name('karyawan.revisi.index');
+
+        Route::get('/karyawan/revisi/create', [
+            KaryawanRevisiController::class,
+            'create',
+        ])->name('karyawan.revisi.create');
+
+        Route::post('/karyawan/revisi', [
+            KaryawanRevisiController::class,
+            'store',
+        ])->name('karyawan.revisi.store');
+
+        Route::get('/karyawan/revisi/{id}/edit', [
+            KaryawanRevisiController::class,
+            'edit',
+        ])->name('karyawan.revisi.edit');
+
+        Route::put('/karyawan/revisi/{id}', [
+            KaryawanRevisiController::class,
+            'update',
+        ])->name('karyawan.revisi.update');
+
+        Route::delete('/karyawan/revisi/{id}', [
+            KaryawanRevisiController::class,
+            'destroy',
+        ])->name('karyawan.revisi.destroy');
+
+        // STATUS PENGERJAAN KARYAWAN
+
+        Route::get('/karyawan/pengerjaan', [
+            KaryawanStatusPengerjaanController::class,
+            'index',
+        ])->name('karyawan.pengerjaan.index');
+
+        Route::put('/karyawan/pengerjaan/{id}', [
+            KaryawanStatusPengerjaanController::class,
+            'update',
+        ])->name('karyawan.pengerjaan.update');
+
+        Route::patch('/karyawan/pengerjaan/{id}', [
+            KaryawanStatusPengerjaanController::class,
+            'update',
+        ])->name('karyawan.pengerjaan.patch');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | UKURAN ADMIN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/admin/ukuran', [
+        AdminUkuranController::class,
+        'index',
+    ])->name('admin.ukuran.index');
+
+    Route::get('/admin/ukuran/create', [
+        AdminUkuranController::class,
+        'create',
+    ])->name('admin.ukuran.create');
+
+    Route::post('/admin/ukuran', [
+        AdminUkuranController::class,
+        'store',
+    ])->name('admin.ukuran.store');
+
+    Route::get('/admin/ukuran/{id}/edit', [
+        AdminUkuranController::class,
+        'edit',
+    ])->name('admin.ukuran.edit');
+
+    Route::put('/admin/ukuran/{id}', [
+        AdminUkuranController::class,
+        'update',
+    ])->name('admin.ukuran.update');
+
+    Route::delete('/admin/ukuran/{id}', [
+        AdminUkuranController::class,
+        'destroy',
+    ])->name('admin.ukuran.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | REFERENSI MODEL ADMIN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/admin/referensi-model', [
+        AdminReferensiModelController::class,
+        'index',
+    ])->name('admin.referensi-model.index');
+
+    Route::post('/admin/referensi-model', [
+        AdminReferensiModelController::class,
+        'store',
+    ])->name('admin.referensi-model.store');
+
+    Route::get('/admin/referensi-model/{kategori}', [
+        AdminReferensiModelController::class,
+        'kategori',
+    ])->whereIn('kategori', [
+        'kebaya',
+        'dress',
+        'perbaikan',
+    ])->name('admin.referensi-model.kategori');
+
+    Route::get('/admin/referensi-model/{kategori}/jenis/{jenis}', [
+        AdminReferensiModelController::class,
+        'jenis',
+    ])->whereIn('kategori', [
+        'kebaya',
+        'dress',
+        'perbaikan',
+    ])->name('admin.referensi-model.jenis');
+
+    Route::put('/admin/referensi-model/{referensiModel}', [
+        AdminReferensiModelController::class,
+        'update',
+    ])->name('admin.referensi-model.update');
+
+    Route::delete('/admin/referensi-model/{referensiModel}', [
+        AdminReferensiModelController::class,
+        'destroy',
+    ])->name('admin.referensi-model.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS PENGERJAAN ADMIN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/admin/status-pengerjaan', [
+        AdminStatusPengerjaanController::class,
+        'index',
+    ])->name('admin.status-pengerjaan.index');
+
+    Route::put('/admin/status-pengerjaan/{id}', [
+        AdminStatusPengerjaanController::class,
+        'update',
+    ])->name('admin.status-pengerjaan.update');
 });

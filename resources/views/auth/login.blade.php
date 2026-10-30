@@ -151,10 +151,17 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn-login">
-            Login
-        </button>
-    </form>
+        <button type="submit" class="btn btn-primary">
+    <span>Masuk ke JAITIN</span>
+    <span class="material-symbols-rounded">arrow_forward</span>
+</button>
+</form>
+
+{{-- PEMISAH LOGIN --}}
+<div class="divider">
+    <span>atau masuk dengan</span>
+</div>
+
 
 </div>
 

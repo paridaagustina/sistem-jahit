@@ -2,24 +2,32 @@
 
 return [
 
-'midtrans' => [
-    'merchant_id' => env('MIDTRANS_MERCHANT_ID'),
-    'client_key' => env('MIDTRANS_CLIENT_KEY'),
-    'server_key' => env('MIDTRANS_SERVER_KEY'),
-    'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
-],
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
     |--------------------------------------------------------------------------
     |
-    | This file is for storing the credentials for third party services such
-    | as Resend, Postmark, AWS, and more. This file provides the de facto
-    | location for this type of information, allowing packages to have
-    | a conventional file to locate the various service credentials.
+    | Konfigurasi layanan pihak ketiga yang digunakan aplikasi Jaitin,
+    | termasuk Google OAuth, Midtrans, dan Fonnte.
     |
     */
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    'midtrans' => [
+        'merchant_id' => env('MIDTRANS_MERCHANT_ID'),
+        'client_key' => env('MIDTRANS_CLIENT_KEY'),
+        'server_key' => env('MIDTRANS_SERVER_KEY'),
+        'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
+    ],
+
+    'fonnte' => [
+        'token' => env('FONNTE_TOKEN'),
+    ],
 
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),

@@ -16,23 +16,13 @@ class PaymentController extends Controller
     {
         $user = Auth::user();
 
-        /*
-        |--------------------------------------------------------------------------
-        | 1. Pastikan hanya pemilik pesanan yang dapat membayar
-        |--------------------------------------------------------------------------
-        */
-
+        // Pastikan pesanan milik pelanggan yang sedang login.
         $pesanan = Pesanan::with('user')
             ->where('id_pesanan', $id)
             ->where('id_user', $user->id_user)
             ->firstOrFail();
 
-        /*
-        |--------------------------------------------------------------------------
-        | 2. Tentukan jumlah pembayaran
-        |--------------------------------------------------------------------------
-        */
-
+        // Tentukan jumlah pembayaran.
         $totalHarga = (float) ($pesanan->total_harga ?? 0);
         $jumlahBayar = (float) ($pesanan->besaran_dp ?? 0);
 
@@ -46,12 +36,7 @@ class PaymentController extends Controller
                 ->with('error', 'Jumlah pembayaran belum ditentukan.');
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | 3. Konfigurasi Midtrans
-        |--------------------------------------------------------------------------
-        */
-
+        // Konfigurasi Midtrans.
         Config::$serverKey = config('services.midtrans.server_key');
         Config::$isProduction = (bool) config(
             'services.midtrans.is_production',
@@ -62,7 +47,6 @@ class PaymentController extends Controller
 
         $orderId = 'JTN-' . $pesanan->id_pesanan . '-' . time();
 
-        // Kolom users yang digunakan adalah name, bukan nama.
         $customerName = $pesanan->user->name
             ?? $user->name
             ?? 'Pelanggan';
@@ -75,9 +59,12 @@ class PaymentController extends Controller
             ?? $user->no_hp
             ?? null;
 
-        $jenisPembayaran = ($jumlahBayar < $totalHarga)
+        $jenisPembayaran = $jumlahBayar < $totalHarga
             ? 'DP'
             : 'Pelunasan';
+
+        // Siapkan URL tujuan dari route JAITIN yang sudah tersedia.
+        $finishUrl = route('pelanggan.pembayaran.index');
 
         $params = [
             'transaction_details' => [
@@ -100,13 +87,12 @@ class PaymentController extends Controller
                         . $pesanan->id_pesanan,
                 ],
             ],
-        ];
 
-        /*
-        |--------------------------------------------------------------------------
-        | 4. Buat transaksi dan tampilkan halaman pelanggan
-        |--------------------------------------------------------------------------
-        */
+            // Arahkan kembali ke JAITIN setelah pembayaran selesai.
+            'callbacks' => [
+                'finish' => $finishUrl,
+            ],
+        ];
 
         try {
             $snapToken = Snap::getSnapToken($params);
@@ -137,7 +123,10 @@ class PaymentController extends Controller
                     'isProduction' => Config::$isProduction,
                     'clientKey' => config('services.midtrans.client_key'),
                 ])
-                ->header('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+                ->header(
+                    'Cache-Control',
+                    'no-store, no-cache, must-revalidate, private'
+                );
 
         } catch (Throwable $e) {
             report($e);

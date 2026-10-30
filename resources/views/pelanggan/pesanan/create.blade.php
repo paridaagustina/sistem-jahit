@@ -12,14 +12,12 @@
         --ink: #49343a;
         --muted: #856d73;
         --border: #ecd9df;
-
         width: 100%;
         max-width: 1180px;
         margin: 0 auto;
         color: var(--ink);
     }
 
-    /* HEADER */
     .pesanan-hero {
         position: relative;
         overflow: hidden;
@@ -27,12 +25,7 @@
         margin-bottom: 24px;
         border: 1px solid #edd5dd;
         border-radius: 22px;
-        background: linear-gradient(
-            120deg,
-            #f6e4e9 0%,
-            #fff7f3 60%,
-            #f3e6e8 100%
-        );
+        background: linear-gradient(120deg, #f6e4e9, #fff7f3 60%, #f3e6e8);
     }
 
     .pesanan-hero::after {
@@ -90,7 +83,6 @@
         line-height: 1.8;
     }
 
-    /* FORM CARD */
     .pesanan-card {
         padding: clamp(18px, 3vw, 30px);
         border: 1px solid var(--border);
@@ -140,7 +132,6 @@
         line-height: 1.6;
     }
 
-    /* FORM INPUT */
     .form-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -185,11 +176,6 @@
         transition: border-color .2s ease, box-shadow .2s ease;
     }
 
-    .pesanan-page .form-control::placeholder,
-    .pesanan-page textarea::placeholder {
-        color: #b09ba1;
-    }
-
     .pesanan-page .form-control:focus,
     .pesanan-page .form-select:focus,
     .pesanan-page textarea:focus {
@@ -202,6 +188,11 @@
         resize: vertical;
     }
 
+    .pesanan-page .form-control::placeholder,
+    .pesanan-page textarea::placeholder {
+        color: #b09ba1;
+    }
+
     .form-help {
         display: block;
         margin-top: 7px;
@@ -210,7 +201,6 @@
         line-height: 1.6;
     }
 
-    /* VALIDATION */
     .error-box {
         margin-bottom: 24px;
         padding: 16px 18px;
@@ -232,7 +222,6 @@
         line-height: 1.8;
     }
 
-    /* REFERENCE CARDS */
     .referensi-info {
         margin: -5px 0 19px;
         color: var(--muted);
@@ -251,14 +240,12 @@
         min-width: 0;
     }
 
-    .referensi-option input[type="radio"] {
+    .referensi-radio {
         position: absolute;
         width: 1px;
         height: 1px;
-        overflow: hidden;
         opacity: 0;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
+        pointer-events: none;
     }
 
     .referensi-card {
@@ -270,10 +257,7 @@
         border-radius: 15px;
         background: #fff;
         cursor: pointer;
-        transition:
-            transform .2s ease,
-            border-color .2s ease,
-            box-shadow .2s ease;
+        transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
 
     .referensi-card:hover {
@@ -282,14 +266,12 @@
         box-shadow: 0 9px 22px rgba(104, 63, 76, .09);
     }
 
-    .referensi-option input[type="radio"]:focus-visible
-    + .referensi-card {
+    .referensi-radio:focus-visible + .referensi-card {
         outline: 3px solid rgba(183, 125, 139, .4);
         outline-offset: 3px;
     }
 
-    .referensi-option input[type="radio"]:checked
-    + .referensi-card {
+    .referensi-radio:checked + .referensi-card {
         border-color: var(--pink);
         box-shadow: 0 0 0 3px rgba(183, 125, 139, .13);
     }
@@ -330,8 +312,7 @@
         box-shadow: 0 2px 8px rgba(55, 30, 38, .12);
     }
 
-    .referensi-option input[type="radio"]:checked
-    + .referensi-card .referensi-check {
+    .referensi-radio:checked + .referensi-card .referensi-check {
         background: var(--pink-dark);
         color: #fff;
     }
@@ -385,7 +366,6 @@
         font-weight: 800;
     }
 
-    /* BUTTONS */
     .button-area {
         display: flex;
         flex-wrap: wrap;
@@ -438,7 +418,6 @@
         background: #fbf0f3;
     }
 
-    /* RESPONSIVE */
     @media (max-width: 1000px) {
         .referensi-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -512,7 +491,6 @@
 
     <div class="pesanan-card">
 
-        {{-- ERROR VALIDASI --}}
         @if ($errors->any())
             <div class="error-box" role="alert" aria-live="polite">
                 <strong>Periksa kembali data pesanan Anda:</strong>
@@ -524,22 +502,14 @@
             </div>
         @endif
 
-        {{-- FORM PESANAN --}}
-        <form
-            action="{{ route('pelanggan.pesanan.store') }}"
-            method="POST"
-        >
+        <form action="{{ route('pelanggan.pesanan.store') }}" method="POST">
             @csrf
 
-            {{-- INFORMASI PESANAN --}}
-            <section class="pesanan-section"
-                     aria-labelledby="informasi-pesanan-title">
-
+            <section class="pesanan-section" aria-labelledby="informasi-pesanan-title">
                 <div class="section-heading">
                     <span class="section-number">01</span>
                     <div>
-                        <h2 class="section-title"
-                            id="informasi-pesanan-title">
+                        <h2 class="section-title" id="informasi-pesanan-title">
                             Informasi Pesanan
                         </h2>
                         <p class="section-description">
@@ -549,146 +519,75 @@
                 </div>
 
                 <div class="form-grid">
-
-                    {{-- JENIS PAKAIAN --}}
                     <div class="form-group">
                         <label class="form-label" for="jenis_pakaian">
                             Jenis Pakaian <span class="required">*</span>
                         </label>
 
-                        <select
-                            id="jenis_pakaian"
-                            name="jenis_pakaian"
-                            class="form-select"
-                            required
-                        >
+                        <select id="jenis_pakaian" name="jenis_pakaian"
+                                class="form-select" required>
                             <option value="">Pilih jenis pakaian</option>
-
-                            <option value="Kebaya"
-                                {{ old('jenis_pakaian') == 'Kebaya' ? 'selected' : '' }}>
-                                Kebaya
-                            </option>
-
-                            <option value="Pakaian"
-                                {{ old('jenis_pakaian') == 'Pakaian' ? 'selected' : '' }}>
-                                Pakaian
-                            </option>
-
-                            <option value="Dress"
-                                {{ old('jenis_pakaian') == 'Dress' ? 'selected' : '' }}>
-                                Dress
-                            </option>
-
-                            <option value="Perbaikan Pakaian"
-                                {{ old('jenis_pakaian') == 'Perbaikan Pakaian' ? 'selected' : '' }}>
-                                Perbaikan Pakaian
-                            </option>
-
-                            <option value="Permak"
-                                {{ old('jenis_pakaian') == 'Permak' ? 'selected' : '' }}>
-                                Permak / Penyesuaian Ukuran
-                            </option>
+                            @foreach (['Kebaya', 'Pakaian', 'Dress', 'Perbaikan Pakaian', 'Permak'] as $jenis)
+                                <option value="{{ $jenis }}"
+                                    @selected(old('jenis_pakaian') === $jenis)>
+                                    {{ $jenis === 'Permak' ? 'Permak / Penyesuaian Ukuran' : $jenis }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
-                    {{-- MODEL PAKAIAN --}}
                     <div class="form-group">
-                        <label class="form-label" for="model_pakaian">
-                            Model Pakaian
-                        </label>
-
-                        <input
-                            id="model_pakaian"
-                            type="text"
-                            name="model_pakaian"
-                            class="form-control"
-                            value="{{ old('model_pakaian') }}"
-                            placeholder="Contoh: Dress panjang lengan panjang"
-                        >
+                        <label class="form-label" for="model_pakaian">Model Pakaian</label>
+                        <input id="model_pakaian" type="text" name="model_pakaian"
+                               class="form-control" value="{{ old('model_pakaian') }}"
+                               placeholder="Contoh: Dress panjang lengan panjang">
                     </div>
 
-                    {{-- JUMLAH --}}
                     <div class="form-group">
                         <label class="form-label" for="jumlah">
                             Jumlah <span class="required">*</span>
                         </label>
-
-                        <input
-                            id="jumlah"
-                            type="number"
-                            name="jumlah"
-                            class="form-control"
-                            value="{{ old('jumlah', 1) }}"
-                            min="1"
-                            step="1"
-                            required
-                        >
-
+                        <input id="jumlah" type="number" name="jumlah"
+                               class="form-control" value="{{ old('jumlah', 1) }}"
+                               min="1" step="1" required>
                         <small class="form-help">
-                            Masukkan jumlah pakaian yang ingin dijahit
-                            atau diperbaiki.
+                            Masukkan jumlah pakaian yang ingin dijahit atau diperbaiki.
                         </small>
                     </div>
 
-                    {{-- TANGGAL HARAPAN --}}
                     <div class="form-group">
                         <label class="form-label" for="tanggal_harapan">
-                            Tanggal yang Diharapkan
-                            <span class="required">*</span>
+                            Tanggal yang Diharapkan <span class="required">*</span>
                         </label>
-
-                        <input
-                            id="tanggal_harapan"
-                            type="date"
-                            name="tanggal_harapan"
-                            class="form-control"
-                            value="{{ old('tanggal_harapan') }}"
-                            required
-                        >
-
+                        <input id="tanggal_harapan" type="date" name="tanggal_harapan"
+                               class="form-control" value="{{ old('tanggal_harapan') }}"
+                               min="{{ now()->toDateString() }}" required>
                         <small class="form-help">
                             Pilih tanggal target penyelesaian pesanan Anda.
                         </small>
                     </div>
 
-                    {{-- UKURAN --}}
                     <div class="form-group full">
                         <label class="form-label" for="ukuran">
                             Ukuran <span class="required">*</span>
                         </label>
-
-                        <textarea
-                            id="ukuran"
-                            name="ukuran"
-                            placeholder="Contoh: Lingkar dada 90 cm, panjang baju 65 cm, panjang lengan 55 cm"
-                            required
-                        >{{ old('ukuran') }}</textarea>
-
+                        <textarea id="ukuran" name="ukuran"
+                                  placeholder="Contoh: Lingkar dada 90 cm, panjang baju 65 cm, panjang lengan 55 cm"
+                                  required>{{ old('ukuran') }}</textarea>
                         <small class="form-help">
                             Cantumkan ukuran dalam sentimeter bila memungkinkan.
                         </small>
                     </div>
 
-                    {{-- CATATAN --}}
                     <div class="form-group full">
-                        <label class="form-label" for="catatan">
-                            Catatan Tambahan
-                        </label>
-
-                        <textarea
-                            id="catatan"
-                            name="catatan"
-                            placeholder="Tuliskan detail tambahan, pilihan bahan, warna, atau permintaan khusus..."
-                        >{{ old('catatan') }}</textarea>
+                        <label class="form-label" for="catatan">Catatan Tambahan</label>
+                        <textarea id="catatan" name="catatan"
+                                  placeholder="Tuliskan detail tambahan, pilihan bahan, warna, atau permintaan khusus...">{{ old('catatan') }}</textarea>
                     </div>
-
                 </div>
             </section>
 
-            {{-- REFERENSI MODEL --}}
-            <section class="pesanan-section"
-                     aria-labelledby="referensi-title">
-
+            <section class="pesanan-section" aria-labelledby="referensi-title">
                 <div class="section-heading">
                     <span class="section-number">02</span>
                     <div>
@@ -706,232 +605,149 @@
                     jelaskan model yang diinginkan pada kolom catatan tambahan.
                 </p>
 
-                {{-- NILAI REFERENSI YANG DIKIRIM KE SERVER --}}
-                <input
-                    type="hidden"
-                    name="referensi_model"
-                    id="referensi_model"
-                    value="{{ old('referensi_model') }}"
-                >
+                {{-- Kedua field ini hanya menyimpan ID model dari database. --}}
+                <input type="hidden" name="referensi_pilihan" id="referensi_pilihan"
+                       value="{{ old('referensi_pilihan', old('model_katalog_id')) }}">
+
+                <input type="hidden" name="model_katalog_id" id="model_katalog_id"
+                       value="{{ old('model_katalog_id', old('referensi_pilihan')) }}">
+
+                @php
+                    $kartuReferensi = [
+                        [
+                            'judul' => 'Kebaya',
+                            'kategori' => 'kebaya',
+                            'gambar' => 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85',
+                            'deskripsi' => 'Referensi busana kebaya untuk acara formal dan momen istimewa.',
+                        ],
+                        [
+                            'judul' => 'Dress',
+                            'kategori' => 'dress',
+                            'gambar' => 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85',
+                            'deskripsi' => 'Referensi model dress untuk berbagai kesempatan.',
+                        ],
+                        [
+                            'judul' => 'Pakaian',
+                            'kategori' => 'pakaian',
+                            'gambar' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=85',
+                            'deskripsi' => 'Referensi pakaian yang dapat disesuaikan dengan kebutuhan.',
+                        ],
+                        [
+                            'judul' => 'Perbaikan Pakaian',
+                            'kategori' => 'perbaikan',
+                            'gambar' => 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=85',
+                            'deskripsi' => 'Referensi perbaikan atau perubahan pakaian.',
+                        ],
+                        [
+                            'judul' => 'Permak',
+                            'kategori' => 'permak',
+                            'gambar' => 'https://placehold.co/800x500/f8eaf0/965e6d?text=Permak+Pakaian',
+                            'deskripsi' => 'Referensi penyesuaian ukuran pakaian.',
+                        ],
+                        [
+                            'judul' => 'Model Lainnya',
+                            'kategori' => 'lainnya',
+                            'gambar' => 'https://images.unsplash.com/photo-1551232864-3f0890e580d9?auto=format&fit=crop&w=800&q=85',
+                            'deskripsi' => 'Inspirasi lain untuk didiskusikan dengan penjahit.',
+                        ],
+                    ];
+
+                    $idPilihanLama = old('model_katalog_id', old('referensi_pilihan'));
+                @endphp
 
                 <div class="referensi-grid">
+                    @foreach ($kartuReferensi as $kartu)
+                        @php
+                            $modelKartu = $referensiModel->first(function ($model) use ($kartu) {
+                                $kategori = strtolower(trim((string) $model->kategori));
+                                $nama = strtolower(trim((string) $model->nama_model));
+                                $jenis = strtolower(trim((string) $model->jenis_model));
 
-                    {{-- KEBAYA --}}
-                    <div class="referensi-option">
-                        <input
-                            type="radio"
-                            name="referensi_pilihan"
-                            id="referensi_kebaya"
-                            value="Kebaya - Model Kebaya"
-                            {{ old('referensi_model') == 'Kebaya - Model Kebaya' ? 'checked' : '' }}
-                        >
+                                if ($kartu['kategori'] === 'lainnya') {
+                                    return !in_array($kategori, [
+                                        'kebaya', 'dress', 'pakaian',
+                                        'perbaikan', 'perbaikan pakaian', 'permak'
+                                    ], true);
+                                }
 
-                        <label for="referensi_kebaya" class="referensi-card">
-                            <div class="referensi-image-wrap">
-                                <img
-    src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85"
-    alt="Referensi busana tradisional untuk model kebaya"
-    class="referensi-image"
-    loading="lazy"
-    onerror="this.onerror=null;this.src='https://placehold.co/800x500/f8eaf0/965e6d?text=Model+Kebaya'"
->
-                                <span class="referensi-check" aria-hidden="true">✓</span>
-                            </div>
+                                if ($kartu['kategori'] === 'perbaikan') {
+                                    return in_array($kategori, ['perbaikan', 'perbaikan pakaian'], true)
+                                        || str_contains($nama, 'perbaikan');
+                                }
 
-                            <div class="referensi-content">
-                                <div class="referensi-name">Kebaya</div>
-                                <p class="referensi-desc">
-                                    Contoh model kebaya hasil jahitan yang
-                                    tersedia di JAITIN.
-                                </p>
-                            </div>
-                        </label>
-                    </div>
+                                if ($kartu['kategori'] === 'permak') {
+                                    return $kategori === 'permak'
+                                        || str_contains($nama, 'permak')
+                                        || str_contains($nama, 'penyesuaian');
+                                }
 
-                    {{-- DRESS --}}
-                    <div class="referensi-option">
-                        <input
-                            type="radio"
-                            name="referensi_pilihan"
-                            id="referensi_dress"
-                            value="Dress - Model Dress"
-                            {{ old('referensi_model') == 'Dress - Model Dress' ? 'checked' : '' }}
-                        >
+                                return $kategori === $kartu['kategori']
+                                    || str_contains($nama, $kartu['kategori'])
+                                    || str_contains($jenis, $kartu['kategori']);
+                            });
 
-                        <label for="referensi_dress" class="referensi-card">
-                            <div class="referensi-image-wrap">
-                                <img
-    src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85"
-    alt="Referensi model dress wanita"
-    class="referensi-image"
-    loading="lazy"
-    onerror="this.onerror=null;this.src='https://placehold.co/800x500/f8eaf0/965e6d?text=Model+Dress'"
->
-                                <span class="referensi-check" aria-hidden="true">✓</span>
-                            </div>
+                            $idModelKartu = $modelKartu?->id;
+                            $isSelected = $idModelKartu !== null
+                                && (string) $idPilihanLama === (string) $idModelKartu;
+                        @endphp
 
-                            <div class="referensi-content">
-                                <div class="referensi-name">Dress</div>
-                                <p class="referensi-desc">
-                                    Contoh model dress yang pernah dibuat
-                                    oleh penjahit.
-                                </p>
-                            </div>
-                        </label>
-                    </div>
+                        <div class="referensi-option">
+                            <input
+                                type="radio"
+                                class="referensi-radio"
+                                id="referensi_kartu_{{ $loop->index }}"
+                                name="referensi_kartu_tampilan"
+                                value="{{ $idModelKartu ?? '' }}"
+                                data-id="{{ $idModelKartu ?? '' }}"
+                                data-nama="{{ $modelKartu?->nama_model ?? $kartu['judul'] }}"
+                                data-kategori="{{ $kartu['kategori'] }}"
+                                @checked($isSelected)
+                            >
 
-                    {{-- PAKAIAN --}}
-                    <div class="referensi-option">
-                        <input
-                            type="radio"
-                            name="referensi_pilihan"
-                            id="referensi_pakaian"
-                            value="Pakaian - Model Pakaian"
-                            {{ old('referensi_model') == 'Pakaian - Model Pakaian' ? 'checked' : '' }}
-                        >
+                            <label for="referensi_kartu_{{ $loop->index }}"
+                                   class="referensi-card">
+                                <div class="referensi-image-wrap">
+                                    <img
+                                        src="{{ $kartu['gambar'] }}"
+                                        alt="Referensi {{ $kartu['judul'] }}"
+                                        class="referensi-image"
+                                        loading="lazy"
+                                    >
+                                    <span class="referensi-check" aria-hidden="true">✓</span>
+                                </div>
 
-                        <label for="referensi_pakaian" class="referensi-card">
-                            <div class="referensi-image-wrap">
-                                <img
-    src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=85"
-    alt="Referensi model pakaian"
-    class="referensi-image"
-    loading="lazy"
-    onerror="this.onerror=null;this.src='https://placehold.co/800x500/f8eaf0/965e6d?text=Model+Pakaian'"
->
-                                <span class="referensi-check" aria-hidden="true">✓</span>
-                            </div>
+                                <div class="referensi-content">
+                                    <div class="referensi-name">{{ $kartu['judul'] }}</div>
+                                    <p class="referensi-desc">{{ $kartu['deskripsi'] }}</p>
 
-                            <div class="referensi-content">
-                                <div class="referensi-name">Pakaian</div>
-                                <p class="referensi-desc">
-                                    Contoh pakaian hasil jahitan yang tersedia.
-                                </p>
-                            </div>
-                        </label>
-                    </div>
-
-                    {{-- PERBAIKAN PAKAIAN --}}
-                    <div class="referensi-option">
-                        <input
-                            type="radio"
-                            name="referensi_pilihan"
-                            id="referensi_perbaikan"
-                            value="Perbaikan Pakaian"
-                            {{ old('referensi_model') == 'Perbaikan Pakaian' ? 'checked' : '' }}
-                        >
-
-                        <label for="referensi_perbaikan" class="referensi-card">
-                            <div class="referensi-image-wrap">
-                                <img
-    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=85"
-    alt="Ilustrasi perawatan dan perbaikan pakaian"
-    class="referensi-image"
-    loading="lazy"
-    onerror="this.onerror=null;this.src='https://placehold.co/800x500/f8eaf0/965e6d?text=Perbaikan+Pakaian'"
->
-                                <span class="referensi-check" aria-hidden="true">✓</span>
-                            </div>
-
-                            <div class="referensi-content">
-                                <div class="referensi-name">Perbaikan Pakaian</div>
-                                <p class="referensi-desc">
-                                    Contoh hasil perbaikan atau perubahan pakaian.
-                                </p>
-                            </div>
-                        </label>
-                    </div>
-
-                    {{-- PERMAK --}}
-                    <div class="referensi-option">
-                        <input
-                            type="radio"
-                            name="referensi_pilihan"
-                            id="referensi_permak"
-                            value="Permak - Penyesuaian Ukuran"
-                            {{ old('referensi_model') == 'Permak - Penyesuaian Ukuran' ? 'checked' : '' }}
-                        >
-
-                        <label for="referensi_permak" class="referensi-card">
-                            <div class="referensi-image-wrap">
-                                <img
-    src="https://images.unsplash.com/photo-1590736969955-71cc94901144?auto=format&fit=crop&w=800&q=85"
-    alt="Ilustrasi penyesuaian ukuran pakaian"
-    class="referensi-image"
-    loading="lazy"
-    onerror="this.onerror=null;this.src='https://placehold.co/800x500/f8eaf0/965e6d?text=Permak+Pakaian'"
->
-                                <span class="referensi-check" aria-hidden="true">✓</span>
-                            </div>
-
-                            <div class="referensi-content">
-                                <div class="referensi-name">Permak</div>
-                                <p class="referensi-desc">
-                                    Contoh hasil penyesuaian ukuran pakaian.
-                                </p>
-                            </div>
-                        </label>
-                    </div>
-
-                    {{-- MODEL LAINNYA --}}
-                    <div class="referensi-option">
-                        <input
-                            type="radio"
-                            name="referensi_pilihan"
-                            id="referensi_lainnya"
-                            value="Model Lainnya"
-                            {{ old('referensi_model') == 'Model Lainnya' ? 'checked' : '' }}
-                        >
-
-                        <label for="referensi_lainnya" class="referensi-card">
-                            <div class="referensi-image-wrap">
-                                <img
-    src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?auto=format&fit=crop&w=800&q=85"
-    alt="Inspirasi model busana lainnya"
-    class="referensi-image"
-    loading="lazy"
-    onerror="this.onerror=null;this.src='https://placehold.co/800x500/f8eaf0/965e6d?text=Inspirasi+Busana'"
->
-                                <span class="referensi-check" aria-hidden="true">✓</span>
-                            </div>
-
-                            <div class="referensi-content">
-                                <div class="referensi-name">Model Lainnya</div>
-                                <p class="referensi-desc">
-                                    Pilihan model lain yang ingin didiskusikan
-                                    dengan penjahit.
-                                </p>
-                            </div>
-                        </label>
-                    </div>
-
+                                    @if (!$modelKartu)
+                                        <small class="form-help">
+                                            Kartu ini hanya sebagai inspirasi karena belum
+                                            ada model aktif yang cocok di katalog.
+                                        </small>
+                                    @endif
+                                </div>
+                            </label>
+                        </div>
+                    @endforeach
                 </div>
 
                 <small class="form-help">
-                    Klik kartu untuk memilih referensi. Anda hanya dapat memilih satu model.
+                    Klik kartu untuk memilih inspirasi. Jika kartu belum memiliki model
+                    di katalog database, kamu tetap dapat mengirim pesanan tanpa referensi.
                 </small>
 
-                {{-- INFORMASI MODEL TERPILIH --}}
-                <div
-                    id="selectedReference"
-                    class="selected-reference"
-                    aria-live="polite"
-                >
+                <div id="selectedReference" class="selected-reference" aria-live="polite">
                     <span class="selected-reference-icon" aria-hidden="true">✓</span>
                     <span>
                         Referensi dipilih:
                         <strong id="selectedReferenceName"></strong>
                     </span>
                 </div>
-
             </section>
 
-            {{-- TOMBOL --}}
             <div class="button-area">
-                <a
-                    href="{{ route('dashboard') }}"
-                    class="btn-action btn-cancel"
-                >
+                <a href="{{ route('dashboard') }}" class="btn-action btn-cancel">
                     Batal
                 </a>
 
@@ -939,7 +755,6 @@
                     Kirim Pesanan <span aria-hidden="true">→</span>
                 </button>
             </div>
-
         </form>
     </div>
 </div>
@@ -948,54 +763,67 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const pilihan = document.querySelectorAll(
-        'input[name="referensi_pilihan"]'
-    );
-
-    const referensiModel = document.getElementById('referensi_model');
+    const kartuRadios = document.querySelectorAll('.referensi-radio');
+    const referensiPilihan = document.getElementById('referensi_pilihan');
+    const modelKatalogId = document.getElementById('model_katalog_id');
     const selectedReference = document.getElementById('selectedReference');
     const selectedReferenceName = document.getElementById('selectedReferenceName');
     const dateInput = document.getElementById('tanggal_harapan');
+    const jenisPakaian = document.getElementById('jenis_pakaian');
 
-    /*
-     * Sinkronkan pilihan kartu dengan input hidden yang dikirim ke server.
-     * Fungsi ini juga memulihkan pilihan setelah validasi gagal.
-     */
-    function syncReferenceSelection() {
-        const selected = document.querySelector(
-            'input[name="referensi_pilihan"]:checked'
-        );
-
-        if (selected) {
-            referensiModel.value = selected.value;
-            selectedReferenceName.textContent = selected.value;
-            selectedReference.classList.add('show');
-        } else {
-            referensiModel.value = '';
+    function syncReferenceSelection(radio) {
+        if (!radio) {
+            referensiPilihan.value = '';
+            modelKatalogId.value = '';
             selectedReferenceName.textContent = '';
             selectedReference.classList.remove('show');
+            return;
+        }
+
+        const id = radio.dataset.id || '';
+
+        // Jangan pernah mengirim label teks sebagai ID database.
+        referensiPilihan.value = id;
+        modelKatalogId.value = id;
+
+        selectedReferenceName.textContent = radio.dataset.nama || 'Model dipilih';
+        selectedReference.classList.add('show');
+
+        const jenisMap = {
+            kebaya: 'Kebaya',
+            dress: 'Dress',
+            pakaian: 'Pakaian',
+            perbaikan: 'Perbaikan Pakaian',
+            permak: 'Permak'
+        };
+
+        if (jenisMap[radio.dataset.kategori]) {
+            jenisPakaian.value = jenisMap[radio.dataset.kategori];
         }
     }
 
-    pilihan.forEach(function (radio) {
-        radio.addEventListener('change', syncReferenceSelection);
+    kartuRadios.forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            syncReferenceSelection(radio);
+        });
     });
 
-    syncReferenceSelection();
+    // Pulihkan pilihan jika halaman dibuka kembali setelah validasi gagal.
+    const pilihanTersimpan = document.querySelector('.referensi-radio:checked');
 
-    /*
-     * Batasi tanggal minimum di sisi browser.
-     * Validasi tanggal di controller Laravel tetap diperlukan.
-     */
+    if (pilihanTersimpan) {
+        syncReferenceSelection(pilihanTersimpan);
+    } else {
+        syncReferenceSelection(null);
+    }
+
     if (dateInput) {
         const today = new Date();
-        const localToday = [
+        dateInput.min = [
             today.getFullYear(),
             String(today.getMonth() + 1).padStart(2, '0'),
             String(today.getDate()).padStart(2, '0')
         ].join('-');
-
-        dateInput.min = localToday;
     }
 });
 </script>

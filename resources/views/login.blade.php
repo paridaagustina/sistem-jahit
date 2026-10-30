@@ -841,12 +841,12 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">
-                    <span>Masuk ke JAITIN</span>
-                    <span class="material-symbols-rounded">arrow_forward</span>
-                </button>
+    <span>Masuk ke JAITIN</span>
+    <span class="material-symbols-rounded">arrow_forward</span>
+</button>
+</form>
 
-            </form>
-
+</a>
             <div class="divider">
                 <span>atau masuk dengan</span>
             </div>
@@ -907,10 +907,11 @@
         togglePassword.setAttribute('aria-pressed', String(isHidden));
     });
 
-    // Placeholder: sambungkan dengan route Google OAuth yang sebenarnya.
-    document.getElementById('googleLogin').addEventListener('click', function () {
-        alert('Silakan hubungkan tombol ini dengan route Google Login Anda.');
-    });
+   // Arahkan pengguna ke route Google OAuth Laravel
+document.getElementById('googleLogin').addEventListener('click', function () {
+    window.location.href = "{{ route('google.redirect') }}";
+});
+
 </script>
 
 </body>
