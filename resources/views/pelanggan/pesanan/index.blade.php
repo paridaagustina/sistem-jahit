@@ -353,61 +353,115 @@
         color: #786761;
     }
 
-    .order-payment-cell {
-        min-width: 130px;
-    }
+    /* KOLOM PEMBAYARAN */
+.orders-table th:last-child,
+.orders-table td.order-payment-cell {
+    position: sticky;
+    right: 0;
+    min-width: 150px;
+    text-align: center;
+    background: #fffaf6;
+    box-shadow: -5px 0 10px rgba(75, 56, 50, 0.06);
+}
 
-    .btn-order-pay {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        min-height: 38px;
-        padding: 9px 14px;
-        background: var(--rose);
-        border: 1px solid var(--rose);
-        border-radius: 10px;
-        color: #fff !important;
-        font-size: .8rem;
-        font-weight: 800;
-        text-decoration: none !important;
-        transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
-    }
+/* Header kolom pembayaran tetap terlihat */
+.orders-table th:last-child {
+    z-index: 5;
+    background: #f0dcd8;
+    color: #603b42;
+}
 
-    .btn-order-pay:hover {
-        background: var(--rose-dark);
-        border-color: var(--rose-dark);
-        box-shadow: 0 5px 13px rgba(159, 115, 120, .2);
-        transform: translateY(-1px);
-    }
+/* Sel pembayaran berada di atas isi tabel */
+.orders-table td.order-payment-cell {
+    z-index: 2;
+    padding: 14px 12px;
+}
 
-    .btn-order-pay:focus-visible,
-    .orders-table-wrap:focus-visible {
-        outline: 3px solid #d6a9ae;
-        outline-offset: 3px;
-    }
+/* TOMBOL BAYAR */
+.orders-table .btn-order-pay {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-    .payment-complete {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 10px;
-        border-radius: 9px;
-        background: #e4f2e2;
-        color: #427448;
-        font-size: .78rem;
-        font-weight: 800;
-    }
+    width: 100%;
+    min-width: 110px;
+    min-height: 44px;
+    padding: 11px 16px;
 
-    .payment-disabled {
-        display: inline-block;
-        padding: 8px 10px;
-        border-radius: 9px;
-        background: #fce8e5;
-        color: #a34e49;
-        font-size: .76rem;
-        font-weight: 750;
-    }
+    background-color: #cf7f94 !important;
+    
+    border-radius: 10px;
+
+    color: #ffffff !important;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: center;
+    text-decoration: none !important;
+    white-space: nowrap;
+
+    cursor: pointer;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    box-shadow: 0 3px 8px rgba(169, 79, 103, 0.18);
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Efek saat diarahkan kursor */
+.orders-table .btn-order-pay:hover {
+    background-color: #84394f !important;
+    border-color: #84394f !important;
+    color: #ffffff !important;
+
+    box-shadow: 0 5px 12px rgba(132, 57, 79, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Efek saat tombol dipilih dengan keyboard */
+.orders-table .btn-order-pay:focus-visible {
+    outline: 3px solid #d6a9ae;
+    outline-offset: 3px;
+}
+
+/* Tampilan ketika tombol ditekan */
+.orders-table .btn-order-pay:active {
+    transform: translateY(0);
+}
+
+/* Label pembayaran lunas */
+.orders-table .payment-complete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    background: #e4f2e2;
+    color: #286337;
+    font-size: 0.82rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Label pembayaran tidak tersedia */
+.orders-table .payment-disabled {
+    display: inline-block;
+    padding: 9px 10px;
+    border-radius: 9px;
+    background: #fce8e5;
+    color: #963d37;
+    font-size: 0.78rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+  
 
     .orders-empty {
         padding: 54px 20px !important;

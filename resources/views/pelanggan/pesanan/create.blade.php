@@ -366,57 +366,135 @@
         font-weight: 800;
     }
 
-    .button-area {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
+    ```css
+/* AREA TOMBOL FORM PESANAN */
+.pesanan-page .button-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+    margin-top: 32px;
+    padding-top: 26px;
+    border-top: 1px solid #f0e1e5;
+}
+
+/* GAYA DASAR TOMBOL */
+.pesanan-page .btn-action {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 48px;
+    padding: 13px 24px;
+
+    border: 1px solid transparent;
+    border-radius: 12px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: center;
+    text-decoration: none !important;
+    white-space: nowrap;
+
+    cursor: pointer;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+/* TOMBOL KIRIM PESANAN */
+.pesanan-page .btn-submit {
+    min-width: 190px;
+
+    background-color: #a33f5b !important;
+    border-color: #a33f5b !important;
+    color: #ffffff !important;
+
+    box-shadow: 0 5px 14px rgba(163, 63, 91, .25);
+}
+
+/* PASTIKAN TEKS DAN IKON TERLIHAT */
+.pesanan-page .btn-submit,
+.pesanan-page .btn-submit span {
+    color: #ffffff !important;
+}
+
+/* EFEK HOVER */
+.pesanan-page .btn-submit:hover {
+    background-color: #843047 !important;
+    border-color: #843047 !important;
+    color: #ffffff !important;
+
+    box-shadow: 0 7px 18px rgba(132, 48, 71, .3);
+    transform: translateY(-2px);
+}
+
+/* EFEK FOKUS KEYBOARD */
+.pesanan-page .btn-submit:focus-visible,
+.pesanan-page .btn-cancel:focus-visible {
+    outline: 3px solid #d6a0af;
+    outline-offset: 4px;
+}
+
+/* EFEK SAAT DIKLIK */
+.pesanan-page .btn-action:active {
+    transform: translateY(0);
+}
+
+/* TOMBOL BATAL */
+.pesanan-page .btn-cancel {
+    min-width: 110px;
+
+    border-color: #d9bdc5;
+    background-color: #ffffff;
+    color: #704b57 !important;
+
+    box-shadow: 0 2px 6px rgba(75, 52, 58, .04);
+}
+
+.pesanan-page .btn-cancel:hover {
+    background-color: #f8eaf0;
+    border-color: #c99ba9;
+    color: #704b57 !important;
+}
+
+/* TAMPILAN HP */
+@media (max-width: 480px) {
+    .pesanan-page .button-area {
+        flex-direction: column-reverse;
+        align-items: stretch;
         gap: 12px;
-        margin-top: 30px;
-        padding-top: 24px;
-        border-top: 1px solid #f0e1e5;
     }
 
-    .btn-action {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 9px;
-        min-height: 46px;
-        padding: 12px 22px;
-        border: 1px solid transparent;
-        border-radius: 11px;
-        font-family: inherit;
-        font-size: 13px;
-        font-weight: 800;
-        text-decoration: none;
-        cursor: pointer;
-        transition: background .2s ease, transform .2s ease;
+    .pesanan-page .btn-action {
+        width: 100%;
+        min-width: 0;
+        min-height: 49px;
+        padding: 13px 18px;
+        font-size: 14px;
+    }
+}
+
+/* AKSESIBILITAS: KURANGI ANIMASI */
+@media (prefers-reduced-motion: reduce) {
+    .pesanan-page .btn-action {
+        transition: none;
     }
 
-    .btn-action:active {
-        transform: translateY(1px);
+    .pesanan-page .btn-submit:hover {
+        transform: none;
     }
+}
 
-    .btn-submit {
-        background: var(--pink);
-        color: #fff;
-        box-shadow: 0 5px 12px rgba(150, 94, 109, .18);
-    }
-
-    .btn-submit:hover {
-        background: var(--pink-dark);
-        color: #fff;
-    }
-
-    .btn-cancel {
-        border-color: #e8d2d9;
-        background: #fff;
-        color: #785b64;
-    }
-
-    .btn-cancel:hover {
-        background: #fbf0f3;
-    }
 
     @media (max-width: 1000px) {
         .referensi-grid {
@@ -617,7 +695,7 @@
                         [
                             'judul' => 'Kebaya',
                             'kategori' => 'kebaya',
-                            'gambar' => 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85',
+                            'gambar' => 'https://cdn-jjmn.jawapos.com/images/19/2025/07/30/kebaya-227429091.jpg',
                             'deskripsi' => 'Referensi busana kebaya untuk acara formal dan momen istimewa.',
                         ],
                         [
@@ -635,13 +713,13 @@
                         [
                             'judul' => 'Perbaikan Pakaian',
                             'kategori' => 'perbaikan',
-                            'gambar' => 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=85',
+                            'gambar' => 'https://akcdn.detik.net.id/visual/2022/10/30/perbaiki-pakaian-yang-rusak-sendiri-di-rumahsumber-freepik_169.jpeg?w=700&q=90',
                             'deskripsi' => 'Referensi perbaikan atau perubahan pakaian.',
                         ],
                         [
                             'judul' => 'Permak',
                             'kategori' => 'permak',
-                            'gambar' => 'https://placehold.co/800x500/f8eaf0/965e6d?text=Permak+Pakaian',
+                            'gambar' => 'https://www.mokapos.com/blog/_next/image?url=https%3A%2F%2Fwp.mokapos.com%2Fwp-content%2Fuploads%2F2024%2F05%2F164641706_l_normal_none.jpg&w=3840&q=75',
                             'deskripsi' => 'Referensi penyesuaian ukuran pakaian.',
                         ],
                         [
